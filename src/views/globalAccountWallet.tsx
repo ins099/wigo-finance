@@ -1,63 +1,32 @@
 import React, { useMemo, useState } from "react";
 import {
-  Image,
   Platform,
   SafeAreaView,
   StatusBar,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
 
-import Button from "../components/button";
-
 import { primaryDark } from "../constants/colors";
 import { globalStyles } from "../styles/globalStyles";
 
 import { Dimensions } from "react-native";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { CalendarPicker } from "../components/calendarPicker";
+import FormService from "../components/FormService";
 import Navbar from "../components/navbar";
-import {
-  PickerComp1,
-  PickerComp2,
-  PickerComp3,
-} from "../components/pickerComp";
-import { TransactionData2 } from "../constants/transactionData";
+import { PROFILE_FIELDS } from "../constants/fields";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 function GlobalAccountWallet({ navigation }: { navigation: any }): JSX.Element {
-  const statusBarHeight: number = StatusBar.currentHeight || 0;
 
-  const [checked, setChecked] = React.useState(true);
-  const logoContainerPadding = useMemo(() => {
-    return {
-      paddingTop:
-        Platform.OS === "android"
-          ? statusBarHeight + windowHeight / 70
-          : windowHeight / 70,
-    };
-  }, [statusBarHeight]);
-
-  const [userDate, setUserDate] = useState({
-    email: "",
-    password: "",
-    phone: "",
-    phone2: "",
-    name: "",
-  });
-
-  function handleChange(key: string, value: string) {
-    setUserDate({
-      ...userDate,
-      [key]: value,
-    });
+  function onSubmit(id: string, data: any) {
+    console.log({ id, data });
   }
 
   return (
@@ -65,8 +34,8 @@ function GlobalAccountWallet({ navigation }: { navigation: any }): JSX.Element {
       colors={[primaryDark, primaryDark]}
       style={globalStyles.container}
     >
+      <Navbar navigation={navigation} />
       <ScrollView>
-        <Navbar navigation={navigation} />
         <SafeAreaView
           style={{
             ...globalStyles.container,
@@ -77,303 +46,9 @@ function GlobalAccountWallet({ navigation }: { navigation: any }): JSX.Element {
           <View style={styles.textContainer}>
             <Text style={styles.textTitle}>Your Profile</Text>
           </View>
-
-          <View style={styles.cardWrap}>
-            <View style={styles.topwrap}>
-              <Text style={styles.heading}>Account Balance</Text>
-              <Text style={styles.idText}>Acc ID: 55502220</Text>
-            </View>
-            <View style={styles.midWrap}>
-              <Image
-                style={{
-                  width: windowWidth / 10,
-                }}
-                resizeMode="contain"
-                source={require("../assets/images/walletIcon.png")}
-              />
-              <Text style={styles.midText}>$ 5,300 USD</Text>
-            </View>
-            <TouchableOpacity onPress={() => {}}>
-              <LinearGradient
-                colors={["#072AC8", "#1E96FC"]}
-                style={styles.cardContainer}
-              >
-                <Image
-                  style={{
-                    width: windowWidth / 12,
-                  }}
-                  resizeMode="contain"
-                  source={require("../assets/images/CollapseIcon.png")}
-                />
-                <Text style={styles.text1}>Add/Remove KYC Account</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.cardWrap}>
-            <Text style={styles.detailHeading}>Account Details</Text>
-            <View style={styles.detailWrap}>
-              <Text style={styles.detailText}>Balance</Text>
-              <View style={styles.detailWrapinner}>
-                <Text style={styles.detailText2}>5,300</Text>
-                <Text style={styles.detailText2}>USD</Text>
-              </View>
-            </View>
-            <View style={styles.detailWrap}>
-              <Text style={styles.detailText}>Routing Number</Text>
-              <View style={styles.detailWrapinner}>
-                <Text style={styles.detailText2}>2536945823</Text>
-              </View>
-            </View>
-            <View style={styles.detailWrap}>
-              <Text style={styles.detailText}>Account Type</Text>
-              <View style={styles.detailWrapinner}>
-                <Text style={styles.detailText2}>Personal Account</Text>
-              </View>
-            </View>
-            <View style={styles.detailWrap}>
-              <Text style={styles.detailText}>Creation Date</Text>
-              <View style={styles.detailWrapinner}>
-                <Text style={styles.detailText2}>25 March 2022</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.statementWrap}>
-            <Text style={styles.statementText}>Account Statement</Text>
-            <View style={styles.statementWrapInner}>
-              <Text style={styles.statementText2}>Get Statement</Text>
-              <Image
-                style={{
-                  width: windowWidth / 16,
-                }}
-                resizeMode="contain"
-                source={require("../assets/images/ImportIcon.png")}
-              />
-            </View>
-          </View>
-          {TransactionData2.map((data, i) => (
-            <View key={i} style={styles.transactionWrap}>
-              <View style={styles.leftWrap}>
-                <View style={styles.iconWrap}>
-                  {data.icon === "up" ? (
-                    <Image
-                      style={{
-                        width: windowWidth / 12,
-                      }}
-                      resizeMode="contain"
-                      source={require("../assets/images/Downloadcirclefill.png")}
-                    />
-                  ) : (
-                    <Image
-                      style={{
-                        width: windowWidth / 12,
-                      }}
-                      resizeMode="contain"
-                      source={require("../assets/images/Loadcirclefill.png")}
-                    />
-                  )}
-                </View>
-                <View>
-                  <Text style={styles.transactionText}>Fund Added</Text>
-                  <Text style={styles.fee}>Card Set up fee</Text>
-                  <Text style={styles.transactionDate}>{data.date}</Text>
-                </View>
-              </View>
-              <View>
-                <View style={styles.flagWrap}>
-                  <Text style={styles.currency}>Currency</Text>
-                  <Image
-                    style={{
-                      width: windowWidth / 18,
-                      marginLeft: windowWidth / 50,
-                    }}
-                    resizeMode="contain"
-                    source={require("../assets/images/flag.png")}
-                  />
-                </View>
-                <Text style={styles.state3}>Debit</Text>
-              </View>
-              <View style={{ alignItems: "flex-end" }}>
-                <Text
-                  style={{
-                    ...styles.amount,
-                    color: data.color,
-                  }}
-                >{`${data.amount}`}</Text>
-                <Text style={styles.state3}>Balance: {data.balance}</Text>
-              </View>
-            </View>
+          {PROFILE_FIELDS.map((item, index) => (
+            <FormService item={item} onSubmit={onSubmit} key={index.toString()}/>
           ))}
-
-          <View style={styles.cardWrap}>
-            <Text style={styles.detailHeading}>Personal Info:</Text>
-            <View style={styles.infoWrap}>
-              <Text style={styles.detailText}>Full name</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="John"
-                placeholderTextColor="rgba(255,255,255,0.8)"
-                onChangeText={(text: string) => handleChange("name", text)}
-                value={userDate.name}
-              />
-            </View>
-
-            <View
-              style={{
-                width: "100%",
-                borderBottomWidth: 1,
-                borderBottomColor: "#fff",
-              }}
-            >
-              <View style={styles.infoWrap}>
-                <Text style={styles.detailTextdob}>Date of birth</Text>
-                <CalendarPicker />
-              </View>
-            </View>
-            <View style={styles.infoWrap}>
-              <Text style={styles.detailText}>Email Id</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="abc@"
-                placeholderTextColor="rgba(255,255,255,0.8)"
-                onChangeText={(text: string) => handleChange("email", text)}
-                value={userDate.email}
-              />
-            </View>
-
-            <View
-              style={{
-                width: "100%",
-                borderBottomWidth: 1,
-                borderBottomColor: "#fff",
-              }}
-            >
-              <View style={styles.infoWrap}>
-                <Text style={styles.mbc}>Mobile country code</Text>
-                <PickerComp1 />
-              </View>
-            </View>
-            <View style={styles.infoWrap}>
-              <Text style={styles.detailText}>Mobile Number</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="523625222"
-                keyboardType="numeric"
-                placeholderTextColor="rgba(255,255,255,0.8)"
-                onChangeText={(text: string) => handleChange("phone", text)}
-                value={userDate.phone}
-              />
-            </View>
-            <View style={styles.buttonsContainer}>
-              <View style={styles.buttonWrapper}>
-                <Button title="Save Change" variant="blue" />
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.cardWrap}>
-            <View style={styles.headingCont}>
-              <Image
-                source={require("../assets/images/locationIcon.png")}
-                resizeMode="contain"
-                style={{
-                  width: windowWidth / 24,
-                  marginRight: windowWidth / 60,
-                }}
-              />
-              <Text style={styles.cardText}>Billing address</Text>
-            </View>
-
-            <View style={styles.doubleWrap}>
-              <View
-                style={{
-                  width: "48%",
-                  borderBottomColor: "#fff",
-                }}
-              >
-                <View style={styles.infoWrap}>
-                  <Text style={styles.countryText}>Country</Text>
-                  <PickerComp2 />
-                </View>
-              </View>
-
-              <View style={styles.infoWrap2}>
-                <Text style={styles.detailText}>ZIP Code</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="1400"
-                  maxLength={6}
-                  keyboardType="numeric"
-                  placeholderTextColor="rgba(255,255,255,0.8)"
-                  onChangeText={(text: string) =>
-                    handleChange("password", text)
-                  }
-                  value={userDate.email}
-                />
-              </View>
-            </View>
-
-            <View
-              style={{
-                width: "100%",
-                borderBottomColor: "#fff",
-              }}
-            >
-              <View style={styles.infoWrap}>
-                <Text style={styles.cityText}>City</Text>
-                <PickerComp3 />
-              </View>
-
-              <View style={styles.infoWrap}>
-                <Text style={styles.detailText}>Mobile Number</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="523625222"
-                  keyboardType="numeric"
-                  placeholderTextColor="rgba(255,255,255,0.8)"
-                  onChangeText={(text: string) => handleChange("phone2", text)}
-                  value={userDate.phone2}
-                />
-              </View>
-
-              <View style={styles.headingCont3}>
-                <Image
-                  source={require("../assets/images/locationIcon.png")}
-                  resizeMode="contain"
-                  style={{
-                    width: windowWidth / 24,
-                  }}
-                />
-                <View style={styles.headingCont2}>
-                  <Text style={styles.cardText}>Delivery address</Text>
-                  <TouchableOpacity
-                    style={styles.subHeading}
-                    onPress={() => setChecked(!checked)}
-                  >
-                    <View style={!checked ? styles.checkBox : styles.checkBox2}>
-                      {checked && (
-                        <Image
-                          style={{
-                            width: windowWidth / 25,
-                          }}
-                          resizeMode="contain"
-                          source={require("../assets/images/tickIcon2.png")}
-                        />
-                      )}
-                    </View>
-                    <Text style={styles.checkboxText}>Same address</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              <View style={styles.buttonsContainer}>
-                <View style={styles.buttonWrapper}>
-                  <Button title="Save Change" variant="blue" />
-                </View>
-              </View>
-            </View>
-          </View>
         </SafeAreaView>
       </ScrollView>
     </LinearGradient>
@@ -402,11 +77,12 @@ const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     width: "100%",
-    paddingHorizontal: windowWidth / 50,
-    paddingVertical: windowWidth / 25,
+    minHeight: 40,
+    marginTop: 20,
     borderRadius: windowWidth / 25,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
 
   text1: {

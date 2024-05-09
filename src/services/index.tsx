@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Toast from "react-native-root-toast";
+import { store } from "../redux/store";
 
 const http = axios.create({
   baseURL: "https://betaapi.xbk365.com",
@@ -8,10 +9,9 @@ const http = axios.create({
 
 function setHttpToken() {
   http.interceptors.request.use(async function (config) {
-    const userJson = await AsyncStorage.getItem("user");
-    const user = JSON.parse(userJson ?? "null");
-    if (user !== null) {
-      config.headers.Authorization = `Bearer ${user.accessToken}`;
+    const accessToken = store.getState().user.accessToken
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
   });
