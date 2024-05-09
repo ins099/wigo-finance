@@ -3,6 +3,7 @@ import { Controller } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 import Input from "./input";
 import DatePicker from "./DatePicker";
+import PhoneInput from "./PhoneInput";
 
 interface FieldProps {
   id: string;
@@ -17,6 +18,13 @@ const Fields: React.FC<FieldProps> = (props) => {
       control={control}
       name={name}
       render={({ field: { value, onChange }, fieldState }) => {
+        if (type == "phone") {
+          return (
+            <View key={id}>
+              <PhoneInput value={value} onChange={onChange} {...props} />
+            </View>
+          );
+        }
         if (type == "date") {
           return (
             <View key={id}>
