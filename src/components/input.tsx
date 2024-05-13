@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import {
+  Image,
   StyleProp,
   StyleSheet,
   TextInput,
   TextInputProps,
   TextStyle,
+  TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
@@ -24,8 +26,11 @@ const Input: React.FC<InputProps> = ({
   label,
   containerStyle,
   error,
+  secureTextEntry,
   ...restProps
 }: InputProps): JSX.Element => {
+  const [isVisible, setVisible] = useState(secureTextEntry);
+
   return (
     <>
       <View style={[styles.container, containerStyle]}>
@@ -38,8 +43,20 @@ const Input: React.FC<InputProps> = ({
           <TextInput
             style={[styles.textInput, textInputStyle]}
             placeholderTextColor={"#BBBBBB"}
+            secureTextEntry={isVisible}
             {...restProps}
           />
+          {secureTextEntry && (
+            <TouchableOpacity onPress={() => setVisible(!isVisible)}>
+              <Image
+                source={
+                  isVisible
+                    ? require(`../assets/images/openEyeIcon.png`)
+                    : require(`../assets/images/hidEyeIcon.png`)
+                }
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
       {error && (
@@ -67,12 +84,14 @@ const styles = StyleSheet.create({
     borderColor: "white",
     width: "100%",
     alignSelf: "center",
+    alignItems: "center",
     // borderRadius: 8,
     height: 40,
+    flexDirection: "row",
   },
   textInput: {
     fontSize: 16,
     flex: 1,
-    color:'white'
+    color: "white",
   },
 });

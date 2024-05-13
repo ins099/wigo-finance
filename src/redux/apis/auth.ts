@@ -34,6 +34,13 @@ export const authAPIs = createApi({
         body,
       }),
     }),
+    changePassword: builder.mutation({
+      query: (body) => ({
+        url: "Account/change-password",
+        method: "PUT",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -42,4 +49,5 @@ export const {
   useLazyVerifyEmailQuery,
   useSignInMutation,
   useForgotPasswordMutation,
+  useChangePasswordMutation,
 } = authAPIs;

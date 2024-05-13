@@ -4,6 +4,7 @@ import { StyleSheet, View } from "react-native";
 import Input from "./input";
 import DatePicker from "./DatePicker";
 import PhoneInput from "./PhoneInput";
+import CustomDropdown from "./Dropdown";
 
 interface FieldProps {
   id: string;
@@ -18,6 +19,13 @@ const Fields: React.FC<FieldProps> = (props) => {
       control={control}
       name={name}
       render={({ field: { value, onChange }, fieldState }) => {
+        if (type == "dropdown") {
+          return (
+            <View key={id}>
+              <CustomDropdown value={value} onChange={onChange} {...props} />
+            </View>
+          );
+        }
         if (type == "phone") {
           return (
             <View key={id}>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -9,85 +9,86 @@ import {
   Text,
   View,
   TextInput,
-} from 'react-native';
+} from "react-native";
 
-import {LinearGradient} from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 
-import Button from '../components/button';
+import Button from "../components/button";
 
-import { primaryDark, primaryLight } from '../constants/colors';
-import { globalStyles } from '../styles/globalStyles';
+import { primaryDark, primaryLight } from "../constants/colors";
+import { globalStyles } from "../styles/globalStyles";
 
-import { Dimensions } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import IconButton from '../components/iconButton';
-import OTPComponent from '../components/otpComponent';
+import { Dimensions } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import IconButton from "../components/iconButton";
+import OTPComponent from "../components/otpComponent";
+import Input from "../components/input";
+import { Controller, useForm } from "react-hook-form";
+import { useChangePasswordMutation } from "../redux/apis/auth";
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 function ChangePassword({ navigation }: { navigation: any }): JSX.Element {
   const statusBarHeight: number = StatusBar.currentHeight || 0;
 
+  const { control, handleSubmit } = useForm();
+
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
+
+  const onPressSubmit = async (data: any) => {
+    try {
+      const response = await changePassword(data);
+      console.log(
+        "======RESPOINSE====",
+        JSON.stringify(response?.data, null, 1)
+      );
+      //   navigation.navigate("SignIn");
+    } catch (error: any) {
+      console.log("CHANGE PASSWORD ERROR====0", error?.message);
+    }
+  };
+
   const logoContainerPadding = useMemo(() => {
     return {
       paddingTop:
-        Platform.OS === 'android'
+        Platform.OS === "android"
           ? statusBarHeight + windowHeight / 70
           : windowHeight / 70,
     };
   }, [statusBarHeight]);
 
-  const [userDate, setUserDate] = useState({
-    email: '',
-    password: '',
-    cpassword: '',
-    phone: '',
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPassword2, setShowPassword2] = useState(false);
-
-  const [pin1, setPin1] = useState('');
-  const [pin2, setPin2] = useState('');
-  const [pin3, setPin3] = useState('');
-  const [pin4, setPin4] = useState('');
-  const [pin5, setPin5] = useState('');
-  const [pin6, setPin6] = useState('');
-
-  function handleChange(key: string, value: string) {
-    setUserDate({
-      ...userDate,
-      [key]: value,
-    });
-  }
-
   return (
     <ScrollView>
       <LinearGradient
         colors={[primaryDark, primaryDark]}
-        style={globalStyles.container}>
+        style={globalStyles.container}
+      >
         <ImageBackground
-          source={require('../assets/images/background.png')}
-          style={{ minHeight: windowHeight + windowHeight / 20 }}>
+          source={require("../assets/images/background.png")}
+          style={{ minHeight: windowHeight + windowHeight / 20 }}
+        >
           <SafeAreaView
             style={{
               ...globalStyles.container,
               ...globalStyles.safeAreaContainer,
-            }}>
+            }}
+          >
             <View
               style={{
-                position: 'absolute',
+                position: "absolute",
                 left: windowWidth / 50,
                 top: windowWidth / 20,
                 zIndex: 100,
-              }}>
+              }}
+            >
               <IconButton onPress={() => navigation.goBack()}>
                 <Image
                   style={{
                     width: 18,
                   }}
                   resizeMode="contain"
-                  source={require('../assets/images/leftIcon.png')}
+                  source={require("../assets/images/leftIcon.png")}
                 />
               </IconButton>
             </View>
@@ -95,159 +96,70 @@ function ChangePassword({ navigation }: { navigation: any }): JSX.Element {
               style={{
                 ...styles.logoContainer,
                 ...logoContainerPadding,
-              }}>
+              }}
+            >
               <Image
                 style={styles.logo}
                 resizeMode="contain"
-                source={require('../assets/images/logoDark.png')}
+                source={require("../assets/images/logoDark.png")}
               />
             </View>
             <View style={styles.textContainer}>
               <Text style={styles.textTitle}>Change Password</Text>
               <Text style={styles.textDescription}>
                 Please enter the 6 digit code sent to your registered email
-                address and new password to change it{' '}
+                address and new password to change it{" "}
               </Text>
             </View>
-
-            <OTPComponent
-              pin1={pin1}
-              setPin1={setPin1}
-              pin2={pin2}
-              setPin2={setPin2}
-              pin3={pin3}
-              setPin3={setPin3}
-              pin4={pin4}
-              setPin4={setPin4}
-              pin5={pin5}
-              setPin5={setPin5}
-              pin6={pin6}
-              setPin6={setPin6}
+            <Controller
+              control={control}
+              key={"PinCode"}
+              name="PinCode"
+              render={({
+                field: { value, onChange },
+                fieldState: { error },
+              }) => <OTPComponent value={value} onChange={onChange} />}
             />
 
             <View
               style={{
-                width: '90%',
-                borderBottomWidth: 1,
-                borderBottomColor: '#fff',
-              }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                {showPassword ? (
-                  <>
-                    <TextInput
-                      style={{ ...styles.input }}
-                      placeholder="New Password"
-                      placeholderTextColor="rgba(255,255,255,0.8)"
-                      onChangeText={(text: string) =>
-                        handleChange('password', text)
-                      }
-                      value={userDate.password}
-                    />
-                    <TouchableOpacity
-                      style={{
-                        marginTop: '100%',
-                      }}
-                      onPress={() => setShowPassword(false)}>
-                      <Image
-                        source={require('../assets/images/openEyeIcon.png')}
-                        resizeMode="contain"
-                        style={{}}
-                      />
-                    </TouchableOpacity>
-                  </>
-                ) : (
-                  <>
-                    <TextInput
-                      style={{ ...styles.input }}
-                      placeholder="New Password"
-                      secureTextEntry
-                      placeholderTextColor="rgba(255,255,255,0.8)"
-                      onChangeText={(text: string) =>
-                        handleChange('password', text)
-                      }
-                      value={userDate.password}
-                    />
-                    <TouchableOpacity
-                      style={{
-                        marginTop: '100%',
-                      }}
-                      onPress={() => setShowPassword(true)}>
-                      <Image
-                        source={require('../assets/images/hidEyeIcon.png')}
-                        resizeMode="contain"
-                        style={{}}
-                      />
-                    </TouchableOpacity>
-                  </>
+                width: "80%",
+              }}
+            >
+              <Controller
+                control={control}
+                key={"OldPassword"}
+                name="OldPassword"
+                render={({
+                  field: { value, onChange },
+                  fieldState: { error },
+                }) => (
+                  <Input
+                    secureTextEntry
+                    placeholder="New Password"
+                    textInputContainerStyle={{ height: 50 }}
+                    value={value}
+                    onChangeText={(val) => onChange(val)}
+                  />
                 )}
-              </View>
-            </View>
-            <View
-              style={{
-                width: '90%',
-                borderBottomWidth: 1,
-                borderBottomColor: '#fff',
-              }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                {showPassword2 ? (
-                  <>
-                    <TextInput
-                      style={{ ...styles.input }}
-                      placeholder="Confirm Password"
-                      placeholderTextColor="rgba(255,255,255,0.8)"
-                      onChangeText={(text: string) =>
-                        handleChange('password', text)
-                      }
-                      value={userDate.password}
-                    />
-                    <TouchableOpacity
-                      style={{
-                        marginTop: '100%',
-                      }}
-                      onPress={() => setShowPassword2(false)}>
-                      <Image
-                        source={require('../assets/images/openEyeIcon.png')}
-                        resizeMode="contain"
-                        style={{}}
-                      />
-                    </TouchableOpacity>
-                  </>
-                ) : (
-                  <>
-                    <TextInput
-                      style={{ ...styles.input }}
-                      placeholder="Confirm Password"
-                      secureTextEntry
-                      placeholderTextColor="rgba(255,255,255,0.8)"
-                      onChangeText={(text: string) =>
-                        handleChange('cpassword', text)
-                      }
-                      value={userDate.cpassword}
-                    />
-                    <TouchableOpacity
-                      style={{
-                        marginTop: '100%',
-                      }}
-                      onPress={() => setShowPassword2(true)}>
-                      <Image
-                        source={require('../assets/images/hidEyeIcon.png')}
-                        resizeMode="contain"
-                        style={{}}
-                      />
-                    </TouchableOpacity>
-                  </>
+              />
+              <Controller
+                control={control}
+                key={"NewPassword"}
+                name="NewPassword"
+                render={({
+                  field: { value, onChange },
+                  fieldState: { error },
+                }) => (
+                  <Input
+                    secureTextEntry
+                    placeholder="Confirm Password"
+                    textInputContainerStyle={{ height: 50 }}
+                    value={value}
+                    onChangeText={(val) => onChange(val)}
+                  />
                 )}
-              </View>
+              />
             </View>
 
             <View style={styles.buttonsContainer}>
@@ -255,14 +167,10 @@ function ChangePassword({ navigation }: { navigation: any }): JSX.Element {
                 <Button
                   title="Submit"
                   variant="blue"
-                  onPress={() => {
-                    navigation.navigate('SignIn');
-                  }}
+                  onPress={handleSubmit(onPressSubmit)}
+                  isLoading={isLoading}
                 />
               </View>
-              <TouchableOpacity style={styles.resendCont}>
-                <Text style={styles.resendText}>Resend</Text>
-              </TouchableOpacity>
             </View>
           </SafeAreaView>
         </ImageBackground>
@@ -273,53 +181,52 @@ function ChangePassword({ navigation }: { navigation: any }): JSX.Element {
 
 const styles = StyleSheet.create({
   logoContainer: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   logo: {
     width: windowWidth / 4.5,
   },
   textTitle: {
     fontSize: windowWidth / 15,
-    color: '#fff',
-    fontWeight: '700',
+    color: "#fff",
+    fontWeight: "700",
   },
   textContainer: {
     marginTop: 0,
-    width: '90%',
+    width: "90%",
   },
   textDescription: {
     marginTop: windowHeight / 50,
     fontSize: windowWidth / 26,
     lineHeight: 20,
-    color: '#fff',
-    fontWeight: '400',
+    color: "#fff",
+    fontWeight: "400",
   },
   buttonsContainer: {
-    width: '100%',
-    alignItems: 'center',
+    width: "80%",
+    alignItems: "center",
     marginTop: 18,
   },
   buttonWrapper: {
-    width: '90%',
+    width: "90%",
     marginTop: 18,
   },
   resendCont: {
     marginTop: windowHeight / 30,
   },
   resendText: {
-    fontWeight: '700',
-    color: '#1E96FC',
+    fontWeight: "700",
+    color: "#1E96FC",
   },
   input: {
-    fontWeight: '400',
+    fontWeight: "400",
     fontSize: windowWidth / 28,
     paddingVertical: windowHeight / 90,
-    borderColor: '#fff',
-    color: '#fff',
+    color: "#fff",
     marginTop: windowHeight / 35,
-    width: '90%',
+    width: "90%",
   },
 });
 

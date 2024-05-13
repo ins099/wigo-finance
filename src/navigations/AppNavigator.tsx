@@ -65,7 +65,6 @@ const AppNavigator = () => {
           <Screen name="SignUp" component={SignUp} />
           <Screen name="ForgetPassword" component={ForgetPassword} />
           <Screen name="EmailVerification" component={EmailVerification} />
-          <Screen name="ChangePassword" component={ChangePassword} />
           <Screen name="ProfileScreenOne" component={ProfileScreenOne} />
           <Screen name="KYCScreen" component={KYCScreen} />
           <Screen name="ProfileCompletion" component={ProfileCompletion} />
@@ -77,6 +76,7 @@ const AppNavigator = () => {
           <Screen name="AddFundCrypto" component={AddFundCryptoScreen} />
         </>
       )}
+      <Screen name="ChangePassword" component={ChangePassword} />
     </Navigator>
   );
 };
