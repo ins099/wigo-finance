@@ -17,6 +17,7 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import AddReciepent from "../components/AddReciepent";
 import { TextBig, TextNormal } from "../components/AppText";
 import SendPayment from "../components/SendPayment";
+import { useGetReceipentsQuery } from "../redux/apis/reciepents";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -69,6 +70,11 @@ export const Reciepent = ({ item, onPressSend, onPressDelete }: any) => {
 function Recipients({ navigation }: { navigation: any }): JSX.Element {
   const sheetRef = useRef();
   const sendSheetRef = useRef();
+
+  const { data, error, isLoading } = useGetReceipentsQuery({});
+console.log({isLoading})
+  console.log("DAAT===", JSON.stringify(data, null, 1));
+  console.log("ERROR===", JSON.stringify(error, null, 1));
 
   const onPressDelete = (item) => {
     console.log({ item });

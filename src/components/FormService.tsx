@@ -17,25 +17,44 @@ const windowHeight = Dimensions.get("window").height;
 interface FormServiceProps {
   item: any;
   onSubmit: (id: string, args: any) => void;
+  defaultvals: any;
 }
 
 const FormService: React.FC<FormServiceProps> = (props) => {
-  const { item, onSubmit } = props;
-  const { control, handleSubmit } = useForm();
+  const { item, onSubmit, defaultvals } = props;
+  const { control: accControl, handleSubmit: accSubmit } = useForm();
+  const { control: addressControl, handleSubmit: addressSubmit } = useForm();
+  const { control: personalControl, handleSubmit: personalSubmit } = useForm();
 
-  const onHandleSubmit = (data: any) => {
-    onSubmit(item.id, data);
+  const onHandleSubmit = () => {
+    if (item.id == "address_detail") {
+      addressSubmit((data) => onSubmit(item.id, data))();
+    } else if (item.id == "account_detail") {
+      accSubmit((data) => onSubmit(item.id, data))();
+    } else {
+      personalSubmit((data) => onSubmit(item.id, data))();
+    }
   };
-
   return (
     <View style={styles.cardWrap} key={item.id}>
       <TextNormal bold color="white">
         {item.title}
       </TextNormal>
       {item.fields.map((it: any) => (
-        <Fields key={it.id} {...it} control={control} />
+        <Fields
+          key={it.id}
+          {...it}
+          control={
+            item.id == "address_detail"
+              ? addressControl
+              : item.id == "account_detail"
+              ? accControl
+              : personalControl
+          }
+          defaultValue={defaultvals[it.name]}
+        />
       ))}
-      <TouchableOpacity onPress={handleSubmit(onHandleSubmit)}>
+      <TouchableOpacity onPress={onHandleSubmit}>
         <LinearGradient
           colors={["#1E96FC", "#072AC8"]}
           style={styles.cardContainer}

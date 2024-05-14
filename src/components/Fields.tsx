@@ -10,14 +10,17 @@ interface FieldProps {
   id: string;
   name: string;
   control: any;
+  type: string;
+  defaultValue: any;
 }
 
 const Fields: React.FC<FieldProps> = (props) => {
-  const { id, control, name, type } = props;
+  const { id, control, name, type, defaultValue } = props;
   return (
     <Controller
       control={control}
       name={name}
+      defaultValue={defaultValue}
       render={({ field: { value, onChange }, fieldState }) => {
         if (type == "dropdown") {
           return (

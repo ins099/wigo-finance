@@ -2,14 +2,26 @@ import { Entypo } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { StyleSheet, View ,TouchableOpacity} from "react-native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { TextBig, TextNormal } from "./AppText";
 import OTPComponent from "./otpComponent";
+import { useChangePinCodeMutation } from "../redux/apis/auth";
 
 const ChangePinCode = ({ close }) => {
   const { control, handleSubmit } = useForm();
+
+  const [changePinCode, { isLoading }] = useChangePinCodeMutation();
+
+  const onSubmit = async (data) => {
+    try {
+      const res = await changePinCode(data);
+      console.log({ res });
+      close();
+    } catch (error) {
+      console.log("ERROROOROR", error);
+    }
+  };
 
   return (
     <LinearGradient
@@ -26,8 +38,8 @@ const ChangePinCode = ({ close }) => {
         </TextBig>
         <Controller
           control={control}
-          key="OldPin"
-          name="OldPin"
+          key="OldPinCode"
+          name="OldPinCode"
           render={({ field: { value, onChange } }) => (
             <OTPComponent
               containerStyle={styles.OTPContainer}
@@ -40,8 +52,8 @@ const ChangePinCode = ({ close }) => {
         />
         <Controller
           control={control}
-          key="NewPin"
-          name="NewPin"
+          key="NewPinCode"
+          name="NewPinCode"
           render={({ field: { value, onChange } }) => (
             <OTPComponent
               containerStyle={styles.OTPContainer}
@@ -54,8 +66,8 @@ const ChangePinCode = ({ close }) => {
         />
         <Controller
           control={control}
-          key="ConfirmNewPin"
-          name="ConfirmNewPin"
+          key="ConfirmNewPinCode"
+          name="ConfirmNewPinCode"
           render={({ field: { value, onChange } }) => (
             <OTPComponent
               containerStyle={styles.OTPContainer}
@@ -69,12 +81,13 @@ const ChangePinCode = ({ close }) => {
 
         <TouchableOpacity
           style={{ ...styles.button, marginVertical: 15 }}
-          onPress={close}
+          onPress={handleSubmit(onSubmit)}
+          // onPress={()=>alert('')}
         >
           <LinearGradient
             colors={["#1E96FC", "#072AC8"]}
             style={{ flex: 1, ...styles.button }}
-          >
+          >kj
             <TextNormal color="white">Change</TextNormal>
           </LinearGradient>
         </TouchableOpacity>

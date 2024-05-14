@@ -14,6 +14,7 @@ import {
 } from "redux-persist";
 import { authAPIs } from "./apis/auth";
 import { generalAPIS } from "./apis/general";
+import { reciepentsAPIs } from "./apis/reciepents";
 // ...
 
 const persistConfig = {
@@ -41,7 +42,8 @@ export const store = configureStore({
       },
     })
       .concat(authAPIs.middleware)
-      .concat(generalAPIS.middleware),
+      .concat(generalAPIS.middleware)
+      .concat(reciepentsAPIs.middleware),
 });
 
 export const persistor = persistStore(store);

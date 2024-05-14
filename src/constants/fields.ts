@@ -1,6 +1,7 @@
+
 export const PROFILE_FIELDS = [
   {
-    id: "1",
+    id: "account_detail",
     title: "Account Details",
     fields: [
       {
@@ -8,7 +9,7 @@ export const PROFILE_FIELDS = [
         label: "Account Name",
         placeholder: "Enter Account Name",
         type: "text",
-        name: "account_name",
+        name: "AccountHolderName",
       },
       {
         id: "2",
@@ -16,7 +17,7 @@ export const PROFILE_FIELDS = [
         placeholder: "Enter Account Number",
         type: "number",
         keyboardType: "number-pad",
-        name: "account_number",
+        name: "AccountNumber",
       },
       {
         id: "3",
@@ -24,29 +25,29 @@ export const PROFILE_FIELDS = [
         placeholder: "Enter Routing Number",
         keyboardType: "number-pad",
         type: "number",
-        name: "routing_number",
+        name: "RouterNumber",
       },
       {
         id: "4",
         label: "Swift",
         placeholder: "Enter Swift",
         type: "text",
-        name: "swift",
+        name: "Swift",
       },
       {
         id: "5",
         label: "Bank Name",
         placeholder: "Enter Bank Name",
         type: "text",
-        name: "bank_name",
+        name: "BankName",
       },
     ],
   },
   {
-    id: "2",
+    id: "personal_detail",
     title: "Personal Info",
     fields: [
-      { id: "1", label: "Full Name", type: "text", name: "Fullname", placeholder:'Enter full name' },
+      { id: "1", label: "Full Name", type: "text", name: "name", placeholder:'Enter full name' },
       {
         id: "2",
         label: "Date of Birth",
@@ -58,7 +59,7 @@ export const PROFILE_FIELDS = [
         id: "3",
         label: "Email ID",
         type: "text",
-        name: "Username",
+        name: "userName",
         placeholder: "Enter your email ID",
         keyboardType: "email-address",
       },
@@ -79,7 +80,7 @@ export const PROFILE_FIELDS = [
     ],
   },
   {
-    id: "3",
+    id: "address_detail",
     title: "Address Detail",
     fields: [
       { id: "1", label: "Country", type: "dropdown", name: "country" },

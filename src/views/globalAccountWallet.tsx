@@ -19,14 +19,38 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import FormService from "../components/FormService";
 import Navbar from "../components/navbar";
 import { PROFILE_FIELDS } from "../constants/fields";
+import { useGetWalletQuery, useUpdateWalletMutation } from "../redux/apis/auth";
+import { useAppSelector } from "../redux/store";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 function GlobalAccountWallet({ navigation }: { navigation: any }): JSX.Element {
+  const [updateWallet, { isLoading, error }] = useUpdateWalletMutation();
+  const {
+    data: wallet = {},
+    isLoading: walletLoading,
+    error: walletError,
+  } = useGetWalletQuery({});
 
-  function onSubmit(id: string, data: any) {
-    console.log({ id, data });
+  const user = useAppSelector((store) => store.user);
+
+  const personalDetail = { ...user };
+
+  async function onSubmit(id: string, data: any) {
+    try {
+      if (id == "address_detail") {
+        console.log("ADDRESS DETAIl0", JSON.stringify(data, null, 1));
+      } else if (id == "account_detail") {
+        console.log("account_detail ", JSON.stringify(data, null, 1));
+        let res = await updateWallet({ ...data });
+        console.log("RES LDJKJF=====", JSON.stringify(res, null, 1));
+      } else {
+        console.log("PERSONAL", JSON.stringify(data, null, 1));
+      }
+    } catch (error) {
+      console.log("ERROROROROR====", error);
+    }
   }
 
   return (
@@ -47,7 +71,12 @@ function GlobalAccountWallet({ navigation }: { navigation: any }): JSX.Element {
             <Text style={styles.textTitle}>Your Profile</Text>
           </View>
           {PROFILE_FIELDS.map((item, index) => (
-            <FormService item={item} onSubmit={onSubmit} key={index.toString()}/>
+            <FormService
+              item={item}
+              onSubmit={onSubmit}
+              key={index.toString()}
+              defaultvals={{ ...wallet, ...personalDetail }}
+            />
           ))}
         </SafeAreaView>
       </ScrollView>
@@ -62,7 +91,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   textContainer: {
-    width: "90%",
+    width: "100%",
   },
 
   headingCont: {
@@ -147,6 +176,7 @@ const styles = StyleSheet.create({
   },
   spacing: {
     marginBottom: windowHeight / 20,
+    paddingHorizontal: 15,
   },
   cardWrap: {
     // width: windowWidth - windowWidth / 26,

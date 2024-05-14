@@ -41,6 +41,27 @@ export const authAPIs = createApi({
         body,
       }),
     }),
+    updateWallet: builder.mutation({
+      query: (body) => ({
+        url: "/v1/fiat/walletinfo",
+        method: "PUT",
+        body,
+      }),
+    }),
+    getWallet: builder.query({
+      query: (params) => ({
+        url: "/v1/fiat/walletinfo",
+        method: "GET",
+        params,
+      }),
+    }),
+    changePinCode: builder.mutation({
+      query: (body) => ({
+        url: "/Mobile/pincode",
+        method: "PATCH",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -50,4 +71,7 @@ export const {
   useSignInMutation,
   useForgotPasswordMutation,
   useChangePasswordMutation,
+  useUpdateWalletMutation,
+  useGetWalletQuery,
+  useChangePinCodeMutation
 } = authAPIs;
