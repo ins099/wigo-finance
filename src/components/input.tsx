@@ -11,6 +11,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { TextSmall, TextSmaller } from "./AppText";
+import { RFValue } from "react-native-responsive-fontsize";
 
 interface InputProps extends TextInputProps {
   textInputContainerStyle?: StyleProp<ViewStyle>;
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   textInput: {
-    fontSize: 16,
+    fontSize: RFValue(15),
     flex: 1,
     color: "white",
   },

@@ -1,13 +1,12 @@
-import { KeyboardAvoidingView, StyleSheet, Text, View } from "react-native";
-import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
 import { Entypo } from "@expo/vector-icons";
-import { TextBig, TextNormal } from "./AppText";
+import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import OTPComponent from "./otpComponent";
-import Button from "./button";
+import { StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { TextBig, TextNormal } from "./AppText";
+import OTPComponent from "./otpComponent";
 
 const ChangePinCode = ({ close }) => {
   const { control, handleSubmit } = useForm();

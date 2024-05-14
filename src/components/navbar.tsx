@@ -12,6 +12,7 @@ import {
 import Modal from "react-native-modal";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import ChangePinCode from "./ChangePinCode";
 
@@ -30,6 +31,8 @@ function Navbar({ navigation }: { navigation: any }): JSX.Element {
 
   const dispatch = useDispatch();
 
+  const { top } = useSafeAreaInsets();
+
   const onPressLogout = async () => {
     dispatch({ type: "LOGOUT", payload: null });
   };
@@ -47,7 +50,16 @@ function Navbar({ navigation }: { navigation: any }): JSX.Element {
       },
     },
     { id: "2", name: "My Wallet", onPress: () => {} },
-    { id: "3", name: "My Reciepents", onPress: () => {} },
+    {
+      id: "3",
+      name: "My Reciepents",
+      onPress: () => {
+        setModalVisible(false);
+        setTimeout(() => {
+          navigation.navigate("recipients");
+        }, 300);
+      },
+    },
     { id: "4", name: "My Cards", onPress: () => {} },
     {
       id: "5",
@@ -84,6 +96,7 @@ function Navbar({ navigation }: { navigation: any }): JSX.Element {
     <View
       style={{
         ...styles.navContainer,
+        paddingTop:top
       }}
     >
       <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -205,7 +218,7 @@ function Navbar({ navigation }: { navigation: any }): JSX.Element {
         keyboardAvoidingViewEnabled={true}
         height={500}
       >
-        <ChangePinCode close = {()=>sheetRef?.current?.close()}/>
+        <ChangePinCode close={() => sheetRef?.current?.close()} />
       </RBSheet>
     </View>
   );
@@ -215,7 +228,7 @@ const styles = StyleSheet.create({
   navContainer: {
     width: "100%",
     backgroundColor: "#2F3B71",
-    height: windowHeight / 7,
+    // height: windowHeight / 7,
     alignItems: "flex-end",
     flexDirection: "row",
     justifyContent: "space-between",
