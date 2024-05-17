@@ -5,6 +5,7 @@ import {
   Dimensions,
   Image,
   StyleSheet,
+  Switch,
   Text,
   TouchableOpacity,
   View,
@@ -15,6 +16,7 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import ChangePinCode from "./ChangePinCode";
+import { useExpoBiometrics } from "../utils/useExpoBiometrics";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -35,6 +37,20 @@ function Navbar({ navigation }: { navigation: any }): JSX.Element {
 
   const onPressLogout = async () => {
     dispatch({ type: "LOGOUT", payload: null });
+  };
+
+  const { authenticate, type, isFeature } = useExpoBiometrics();
+  const [isBioMetric, setIsBiometric] = useState(false);
+
+  const onChangeBioMetric = async () => {
+    setModalVisible(false);
+    setTimeout(async () => {
+      setIsBiometric(false);
+      if (!isBioMetric) {
+        let res = await authenticate();
+        if (res) setIsBiometric(true);
+      }
+    }, 300);
   };
 
   const drawerList = [
@@ -86,7 +102,20 @@ function Navbar({ navigation }: { navigation: any }): JSX.Element {
             }, 300);
           },
         },
-        { id: "5-iii", name: "Allow Face ID", onPress: () => {} },
+        {
+          id: "5-iii",
+          name:
+            type != null
+              ? !isFeature
+                ? "Biometrics not set in device"
+                : type == "face-id"
+                ? "Allow FaceId"
+                : "Allow Fingerprint"
+              : "Biometrics not available.",
+          onPress: () => {
+            !isFeature ? null : onChangeBioMetric();
+          },
+        },
       ],
     },
     { id: "6", name: "Log Out", onPress: onPressLogout },
@@ -96,7 +125,7 @@ function Navbar({ navigation }: { navigation: any }): JSX.Element {
     <View
       style={{
         ...styles.navContainer,
-        paddingTop:top
+        paddingTop: top,
       }}
     >
       <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -183,11 +212,28 @@ function Navbar({ navigation }: { navigation: any }): JSX.Element {
                   expand?.id == item?.id &&
                   item?.children.map((child) => (
                     <TouchableOpacity
-                      style={{ paddingHorizontal: 13 }}
+                      style={{
+                        paddingHorizontal: 13,
+                      }}
                       onPress={child?.onPress}
+                      disabled={typeof child?.onPress !== "function"}
                     >
-                      <View style={{ marginVertical: 13 }}>
-                        <Text style={styles.text}>{child?.name}</Text>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <View style={{ marginVertical: 13 }}>
+                          <Text style={styles.text}>{child?.name}</Text>
+                        </View>
+                        {child.id === "5-iii" && (
+                          <Switch
+                            value={isBioMetric}
+                            onChange={onChangeBioMetric}
+                          />
+                        )}
                       </View>
                       <View style={styles.divider} />
                     </TouchableOpacity>
