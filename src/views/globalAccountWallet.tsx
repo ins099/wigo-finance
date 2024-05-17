@@ -1,10 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import {
-  Platform,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -13,25 +12,58 @@ import { LinearGradient } from "expo-linear-gradient";
 import { primaryDark } from "../constants/colors";
 import { globalStyles } from "../styles/globalStyles";
 
-import { Dimensions } from "react-native";
+import { ActivityIndicator, Dimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { RFPercentage } from "react-native-responsive-fontsize";
+import { TextSmall } from "../components/AppText";
 import FormService from "../components/FormService";
 import Navbar from "../components/navbar";
+import OTPComponent from "../components/otpComponent";
 import { PROFILE_FIELDS } from "../constants/fields";
-import { useGetWalletQuery, useUpdateWalletMutation } from "../redux/apis/auth";
+import useToast from "../hooks";
+import {
+  useChangePinCodeMutation,
+  useGetWalletQuery,
+  useUpdateWalletMutation,
+} from "../redux/apis/auth";
 import { useAppSelector } from "../redux/store";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
+function combineObjects(obj1, obj2) {
+  // Create a new object to hold the combined result
+  let combinedObj = {};
+
+  // Iterate through the properties of obj1
+  for (let key in obj1) {
+    if (obj1.hasOwnProperty(key)) {
+      // If the property exists in both objects and the values are different, take the value from obj2
+      if (obj2.hasOwnProperty(key) && obj2[key] && obj1[key] !== obj2[key]) {
+        combinedObj[key] = obj2[key];
+      } else {
+        // Otherwise, take the value from obj1
+        combinedObj[key] = obj1[key];
+      }
+    }
+  }
+
+  return combinedObj;
+}
+
 function GlobalAccountWallet({ navigation }: { navigation: any }): JSX.Element {
-  const [updateWallet, { isLoading, error }] = useUpdateWalletMutation();
+  const [updateWallet, { isLoading: walletUpdtLoad, error }] =
+    useUpdateWalletMutation();
+  const { fire } = useToast();
   const {
     data: wallet = {},
     isLoading: walletLoading,
     error: walletError,
   } = useGetWalletQuery({});
+
+  const [changePin, { isLoading: pinLoad }] = useChangePinCodeMutation();
+
+  const [pinCode, setPinCode] = useState("");
 
   const user = useAppSelector((store) => store.user);
 
@@ -42,9 +74,11 @@ function GlobalAccountWallet({ navigation }: { navigation: any }): JSX.Element {
       if (id == "address_detail") {
         console.log("ADDRESS DETAIl0", JSON.stringify(data, null, 1));
       } else if (id == "account_detail") {
-        console.log("account_detail ", JSON.stringify(data, null, 1));
-        let res = await updateWallet({ ...data });
+        const body = combineObjects(wallet, data);
+        let res = await updateWallet(body);
         console.log("RES LDJKJF=====", JSON.stringify(res, null, 1));
+        if (res?.data) fire("Account Updated Successfully.", "success");
+        return fire("Account Updated Successfully.", "success");
       } else {
         console.log("PERSONAL", JSON.stringify(data, null, 1));
       }
@@ -52,6 +86,25 @@ function GlobalAccountWallet({ navigation }: { navigation: any }): JSX.Element {
       console.log("ERROROROROR====", error);
     }
   }
+
+  const onSaveCode = async () => {
+    if (!pinCode) fire("Please input pincode");
+    try {
+      const res = await changePin({
+        OldPinCode: "",
+        NewPinCode: pinCode,
+        ConfirmNewPinCode: pinCode,
+      });
+      console.log(res);
+      if (res?.data) {
+        return fire("Pin code saved", "success");
+      }
+      return fire(res?.error?.data ?? "Something went wrong");
+    } catch (error) {
+      console.log("ERROR", error);
+      return fire("Something went wrong");
+    }
+  };
 
   return (
     <LinearGradient
@@ -76,8 +129,41 @@ function GlobalAccountWallet({ navigation }: { navigation: any }): JSX.Element {
               onSubmit={onSubmit}
               key={index.toString()}
               defaultvals={{ ...wallet, ...personalDetail }}
+              walletLoading={walletUpdtLoad}
             />
           ))}
+
+          <View style={styles.cardWrap}>
+            <OTPComponent
+              containerStyle={{
+                flex: 1,
+                width: "100%",
+                padding: "5%",
+                // paddingHorizontal: '10%',
+              }}
+              showStyle={false}
+              textInputContainerStyle={{
+                paddingHorizontal: "7%",
+                marginTop: 10,
+              }}
+              value={pinCode}
+              onChange={function (arg: any): void {
+                setPinCode(arg);
+              }}
+            />
+            <TouchableOpacity onPress={onSaveCode} disabled={pinLoad}>
+              <LinearGradient
+                colors={["#1E96FC", "#072AC8"]}
+                style={styles.cardContainer}
+              >
+                {pinLoad ? (
+                  <ActivityIndicator color="white" size="small" />
+                ) : (
+                  <TextSmall color="white">Save Changes</TextSmall>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
         </SafeAreaView>
       </ScrollView>
     </LinearGradient>
@@ -104,20 +190,18 @@ const styles = StyleSheet.create({
     marginTop: windowHeight / 40,
   },
   cardContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    width: "100%",
     minHeight: 40,
-    marginTop: 20,
     borderRadius: windowWidth / 25,
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    width: RFPercentage(37),
+    marginVertical: 20,
   },
 
   text1: {
     color: "#fff",
     fontSize: windowWidth / 25,
-    marginLeft: windowWidth / 30,
+    // marginLeft: windowWidth / 30,
   },
 
   transactionWrap: {
@@ -183,7 +267,9 @@ const styles = StyleSheet.create({
     width: "99%",
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: windowWidth / 25,
-    padding: windowWidth / 20,
+    // padding: windowWidth / 20,
+    alignItems: "center",
+    height: 200,
     marginTop: windowHeight / 40,
   },
   topwrap: {

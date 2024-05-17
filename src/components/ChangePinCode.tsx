@@ -87,7 +87,7 @@ const ChangePinCode = ({ close }) => {
           <LinearGradient
             colors={["#1E96FC", "#072AC8"]}
             style={{ flex: 1, ...styles.button }}
-          >kj
+          >
             <TextNormal color="white">Change</TextNormal>
           </LinearGradient>
         </TouchableOpacity>

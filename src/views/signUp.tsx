@@ -4,7 +4,6 @@ import {
   Alert,
   Image,
   KeyboardAvoidingView,
-  PixelRatio,
   Platform,
   SafeAreaView,
   StatusBar,
@@ -12,27 +11,25 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 
 import Button from "../components/button";
 
 import { Dimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { useDispatch } from "react-redux";
 import IconButton from "../components/iconButton";
-import { CustomPicker, PickerComp6 } from "../components/pickerComp";
+import { CustomPicker } from "../components/pickerComp";
+import RadioButton from "../components/radioButton";
 import { primaryDark, primaryLight } from "../constants/colors";
+import { Locations } from "../constants/countryData";
 import { useAuth } from "../contexts/authContext";
 import useToast from "../hooks";
-import { registerUser } from "../services";
-import { globalStyles } from "../styles/globalStyles";
-import { useAppSelector } from "../redux/store";
-import RadioButton from "../components/radioButton";
 import { useLazyVerifyEmailQuery, useSignupMutation } from "../redux/apis/auth";
 import { useGetLocationsQuery } from "../redux/apis/general";
-import { Locations } from "../constants/countryData";
-import { useDispatch } from "react-redux";
 import { setAppUser } from "../redux/reducers/user";
+import { globalStyles } from "../styles/globalStyles";
 // import DropdownOne from '../components/dropdownOne';
 
 const windowWidth = Dimensions.get("window").width;

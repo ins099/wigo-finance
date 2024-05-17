@@ -63,7 +63,7 @@ const AddReciepent: React.FC<Props> = (props) => {
               <PhoneInput
                 placeholder="Phone Number"
                 value={value}
-                onChangeText={(txt) => onChange(txt)}
+                onChange={onChange}
               />
             )}
           />

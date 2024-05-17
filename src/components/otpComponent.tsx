@@ -20,6 +20,8 @@ interface OTPProps {
   cellColor?: string;
   numberOfInputs?: number;
   containerStyle?: ViewStyle;
+  showStyle: boolean;
+  textInputContainerStyle: ViewStyle;
 }
 
 function OTPComponent(props: OTPProps) {
@@ -30,21 +32,27 @@ function OTPComponent(props: OTPProps) {
     label = "Pin Code",
     numberOfInputs = 4,
     cellColor,
+    showStyle = true,
+    textInputContainerStyle,
   } = props;
 
   return (
-    <View style={[styles.main, containerStyle]}>
+    <View style={[showStyle && styles.main, containerStyle]}>
       {label && (
         <TextNormal
           color="white"
-          textStyle={{ paddingLeft: "13%", marginVertical: 5 }}
+          textStyle={
+            showStyle && { paddingLeft: "13%", marginVertical: 5 }
+          }
         >
           {label}
         </TextNormal>
       )}
-      <View style={styles.container}>
+      <View style={[showStyle && styles.container, textInputContainerStyle]}>
         <OTPTextView
-          containerStyle={styles.textInputContainer}
+          containerStyle={{
+            ...styles.textInputContainer,
+          }}
           textInputStyle={[
             styles.roundedTextInput,
             cellColor && { backgroundColor: cellColor },

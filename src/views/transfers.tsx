@@ -96,7 +96,7 @@ function Transfers({ navigation }: { navigation: any }): JSX.Element {
                 <PhoneInput
                   placeholder="Phone Number"
                   value={value}
-                  onChangeText={(txt) => onChange(txt)}
+                  onChange={onChange}
                 />
               )}
             />

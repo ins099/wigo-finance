@@ -139,9 +139,7 @@ const ConfirmPayment = (props) => {
             <View style={{ flex: 1.5, alignItems: "center" }}>
               <OTPComponent
                 value={""}
-                onChange={function (arg: any): void {
-                  throw new Error("Function not implemented.");
-                }}
+                onChange={function (arg: any): void {}}
                 containerStyle={{ height: RFPercentage(13) }}
               />
               <View style={styles.btnContainer}>

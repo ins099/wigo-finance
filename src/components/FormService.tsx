@@ -2,6 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { useForm } from "react-hook-form";
 import {
+  ActivityIndicator,
   Dimensions,
   StyleSheet,
   Text,
@@ -18,10 +19,11 @@ interface FormServiceProps {
   item: any;
   onSubmit: (id: string, args: any) => void;
   defaultvals: any;
+  walletLoading: boolean;
 }
 
 const FormService: React.FC<FormServiceProps> = (props) => {
-  const { item, onSubmit, defaultvals } = props;
+  const { item, onSubmit, defaultvals, walletLoading } = props;
   const { control: accControl, handleSubmit: accSubmit } = useForm();
   const { control: addressControl, handleSubmit: addressSubmit } = useForm();
   const { control: personalControl, handleSubmit: personalSubmit } = useForm();
@@ -54,12 +56,16 @@ const FormService: React.FC<FormServiceProps> = (props) => {
           defaultValue={defaultvals[it.name]}
         />
       ))}
-      <TouchableOpacity onPress={onHandleSubmit}>
+      <TouchableOpacity onPress={onHandleSubmit} disabled={walletLoading}>
         <LinearGradient
           colors={["#1E96FC", "#072AC8"]}
           style={styles.cardContainer}
         >
-          <Text style={styles.text1}>Edit</Text>
+          {walletLoading && item.id === "account_detail" ? (
+            <ActivityIndicator color="white" size="small" />
+          ) : (
+            <Text style={styles.text1}>Edit</Text>
+          )}
         </LinearGradient>
       </TouchableOpacity>
     </View>
