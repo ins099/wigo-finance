@@ -42,15 +42,16 @@ const TabScreens = () => {
         component={WithdrawFundConfirmationScreen}
       />
       <Screen name="WithdrawFundDetail" component={WithdrawFundDetailScreen} />
-      </Stack.Navigator>
-)
-      }
+    </Stack.Navigator>
+  );
+};
 
 const TabNavigator = () => {
   return (
     <Navigator
       initialRouteName="Home"
       screenOptions={{
+        tabBarHideOnKeyboard: true,
         headerShown: false,
         tabBarStyle: {
           flexDirection: "row",
@@ -76,13 +77,13 @@ const TabNavigator = () => {
         options={{
           tabBarIcon: () => (
             <Image
-            source={require("./../assets/images/Home.png")}
+              source={require("./../assets/images/Home.png")}
               alt="Home"
               style={{
                 marginTop: windowWidth / 30,
-                width: windowWidth/10,
-                height: windowWidth/10,
-                resizeMode:"contain"
+                width: windowWidth / 10,
+                height: windowWidth / 10,
+                resizeMode: "contain",
               }}
             />
           ),
@@ -91,11 +92,11 @@ const TabNavigator = () => {
       <Screen
         name="Crypto"
         component={TabScreens}
-        listeners={props => ({
-          tabPress: e => {
+        listeners={(props) => ({
+          tabPress: (e) => {
             e.preventDefault();
-        }})
-          }
+          },
+        })}
         options={{
           tabBarIcon: () => (
             <Image
@@ -103,8 +104,8 @@ const TabNavigator = () => {
               alt="Crypto"
               style={{
                 marginTop: windowWidth / 30,
-                width: windowWidth/10,
-                height: windowWidth/10,
+                width: windowWidth / 10,
+                height: windowWidth / 10,
                 resizeMode: "contain",
               }}
             />
@@ -114,12 +115,11 @@ const TabNavigator = () => {
       <Screen
         name="Invest"
         component={TabScreens}
-
-        listeners={props => ({
-          tabPress: e => {
+        listeners={(props) => ({
+          tabPress: (e) => {
             e.preventDefault();
-        }})
-          }
+          },
+        })}
         options={{
           tabBarIcon: () => (
             <Image
@@ -127,8 +127,8 @@ const TabNavigator = () => {
               alt="Invest"
               style={{
                 marginTop: windowWidth / 30,
-                width: windowWidth/10,
-                height: windowWidth/10,
+                width: windowWidth / 10,
+                height: windowWidth / 10,
                 resizeMode: "contain",
               }}
             />
@@ -138,12 +138,11 @@ const TabNavigator = () => {
       <Screen
         name="Services"
         component={TabScreens}
-
-        listeners={props => ({
-          tabPress: e => {
+        listeners={(props) => ({
+          tabPress: (e) => {
             e.preventDefault();
-        }})
-          }
+          },
+        })}
         options={{
           tabBarIcon: () => (
             <Image
@@ -151,8 +150,8 @@ const TabNavigator = () => {
               alt="Services"
               style={{
                 marginTop: windowWidth / 30,
-                width: windowWidth/10,
-                height: windowWidth/10,
+                width: windowWidth / 10,
+                height: windowWidth / 10,
                 resizeMode: "contain",
               }}
             />
@@ -162,12 +161,11 @@ const TabNavigator = () => {
       <Screen
         name="Community"
         component={TabScreens}
-
-        listeners={props => ({
-          tabPress: e => {
+        listeners={(props) => ({
+          tabPress: (e) => {
             e.preventDefault();
-        }})
-          }
+          },
+        })}
         options={{
           tabBarIcon: () => (
             <Image
@@ -175,8 +173,8 @@ const TabNavigator = () => {
               alt="Community"
               style={{
                 marginTop: windowWidth / 30,
-                width: windowWidth/10,
-                height: windowWidth/10,
+                width: windowWidth / 10,
+                height: windowWidth / 10,
                 resizeMode: "contain",
               }}
             />
@@ -186,12 +184,11 @@ const TabNavigator = () => {
       <Screen
         name="Media"
         component={TabScreens}
-
-        listeners={props => ({
-          tabPress: e => {
+        listeners={(props) => ({
+          tabPress: (e) => {
             e.preventDefault();
-        }})
-          }
+          },
+        })}
         options={{
           tabBarIcon: () => (
             <Image
@@ -199,8 +196,8 @@ const TabNavigator = () => {
               alt="Media"
               style={{
                 marginTop: windowWidth / 30,
-                width: windowWidth/10,
-                height: windowWidth/10,
+                width: windowWidth / 10,
+                height: windowWidth / 10,
                 resizeMode: "contain",
               }}
             />

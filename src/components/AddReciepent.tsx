@@ -25,7 +25,7 @@ const AddReciepent: React.FC<Props> = (props) => {
     >
       <View style={styles.container}>
         <View style={{ alignItems: "flex-end" }}>
-          <Entypo name="cross" color="white" size={25} />
+          <Entypo onPress={close} name="cross" color="white" size={25} />
         </View>
         <TextBig color="white" center>
           Add New Reciepent

@@ -36,7 +36,7 @@ const SendPayment: React.FC<Props> = ({ close }) => {
     >
       <View style={styles.container}>
         <View style={{ alignItems: "flex-end" }}>
-          <Entypo onPress={close} name="cross" color="white" size={25} />
+          <Entypo onPress={()=>close()} name="cross" color="white" size={25} />
         </View>
         <TextBigger
           color="white"

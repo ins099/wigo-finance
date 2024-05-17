@@ -72,9 +72,6 @@ function Recipients({ navigation }: { navigation: any }): JSX.Element {
   const sendSheetRef = useRef();
 
   const { data, error, isLoading } = useGetReceipentsQuery({});
-console.log({isLoading})
-  console.log("DAAT===", JSON.stringify(data, null, 1));
-  console.log("ERROR===", JSON.stringify(error, null, 1));
 
   const onPressDelete = (item) => {
     console.log({ item });
@@ -168,7 +165,7 @@ console.log({isLoading})
         keyboardAvoidingViewEnabled={true}
         height={500}
       >
-        <SendPayment close={() => sheetRef?.current?.close()} />
+        <SendPayment close={() => sendSheetRef?.current?.close()} />
       </RBSheet>
     </LinearGradient>
   );

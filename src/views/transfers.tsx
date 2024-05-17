@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import {
+  KeyboardAvoidingView,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -35,81 +36,90 @@ function Transfers({ navigation }: { navigation: any }): JSX.Element {
   const { control, handleSubmit } = useForm();
   const sheetRef = useRef();
   const onPressSend = () => {
-    sheetRef.current?.open()
+    sheetRef.current?.open();
   };
   const onPressDelete = () => {};
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <LinearGradient colors={[primaryDark, primaryDark]} style={{ flex: 1 }}>
         <Navbar navigation={navigation} />
-        <View style={styles.container}>
-          <View style={styles.textContainer}>
-            <Text style={styles.textTitle}>Make your Transfer</Text>
-          </View>
+        <View style={{ flex: 1 }}>
+          <ScrollView
+            // contentContainerStyle={{ backgroundColor: "red", height: "100%" }}
+            // style={{ flex: 1, height: "100%" }}
+          >
+            <KeyboardAvoidingView style={{ flex: 1 }}>
+              <View style={styles.container}>
+                <View style={styles.textContainer}>
+                  <Text style={styles.textTitle}>Make your Transfer</Text>
+                </View>
 
-          <Text style={styles.subtextTitle}>
-            Make transfers to your peers by selecting existing recipients or
-            adding new
-          </Text>
-          <View style={{ flex: 1 }}>
-            <View style={styles.subHeading}>
-              <Text style={styles.subHeadingText}>Recent Transfers</Text>
-            </View>
-            {TransferData2.slice(0, 3).map((item) => (
-              <Reciepent
-                item={item}
-                onPressSend={onPressSend}
-                onPressDelete={onPressDelete}
-              />
-            ))}
-          </View>
-          <View style={{ flex: 1, justifyContent: "space-evenly" }}>
-            <Controller
-              control={control}
-              key="EmailId"
-              name="EmailId"
-              render={({ field: { value, onChange } }) => (
-                <Input
-                  value={value}
-                  onChangeText={(str) => onChange(str)}
-                  placeholder="Email ID"
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              key="FullName"
-              name="FullName"
-              render={({ field: { value, onChange } }) => (
-                <Input
-                  value={value}
-                  onChangeText={(str) => onChange(str)}
-                  placeholder="Full name of the account holder"
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              key="PhoneNumber"
-              name="PhoneNumber"
-              render={({ field: { value, onChange } }) => (
-                <PhoneInput
-                  placeholder="Phone Number"
-                  value={value}
-                  onChange={onChange}
-                />
-              )}
-            />
+                <Text style={styles.subtextTitle}>
+                  Make transfers to your peers by selecting existing recipients
+                  or adding new
+                </Text>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.subHeading}>
+                    <Text style={styles.subHeadingText}>Recent Transfers</Text>
+                  </View>
+                  {TransferData2.slice(0, 3).map((item) => (
+                    <Reciepent
+                      item={item}
+                      onPressSend={onPressSend}
+                      onPressDelete={onPressDelete}
+                    />
+                  ))}
+                </View>
+                <View style={{ height:400, justifyContent: "space-evenly" }}>
+                  <Controller
+                    control={control}
+                    key="EmailId"
+                    name="EmailId"
+                    render={({ field: { value, onChange } }) => (
+                      <Input
+                        value={value}
+                        onChangeText={(str) => onChange(str)}
+                        placeholder="Email ID"
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    key="FullName"
+                    name="FullName"
+                    render={({ field: { value, onChange } }) => (
+                      <Input
+                        value={value}
+                        onChangeText={(str) => onChange(str)}
+                        placeholder="Full name of the account holder"
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    key="PhoneNumber"
+                    name="PhoneNumber"
+                    render={({ field: { value, onChange } }) => (
+                      <PhoneInput
+                        placeholder="Phone Number"
+                        value={value}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
 
-            <TouchableOpacity onPress={() => {}}>
-              <LinearGradient
-                colors={["#1E96FC", "#072AC8"]}
-                style={styles.button}
-              >
-                <TextNormal color="white">Search</TextNormal>
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
+                  <TouchableOpacity onPress={() => {}}>
+                    <LinearGradient
+                      colors={["#1E96FC", "#072AC8"]}
+                      style={styles.button}
+                    >
+                      <TextNormal color="white">Search</TextNormal>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </KeyboardAvoidingView>
+          </ScrollView>
         </View>
       </LinearGradient>
 
