@@ -2,26 +2,43 @@ import { Entypo } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, View, Image, Dimensions, Text,TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Dimensions,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import { TextBigger, TextNormal } from "./AppText";
 import Input from "./input";
-import { RFPercentage } from "react-native-responsive-fontsize";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import { PickerComp5 } from "./pickerComp";
 import CountryPicker from "./CountryPicker";
 import WalletDropdown from "./WalletDropdown";
 import ConfirmPayment from "./ConfirmPayment";
+import { useGetUserWalletsQuery } from "../redux/apis/auth";
+import { useAppSelector } from "../redux/store";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 interface Props {
   close: () => void;
+  sendUser: any;
 }
 
-const SendPayment: React.FC<Props> = ({ close }) => {
+const SendPayment: React.FC<Props> = ({ close, sendUser }) => {
   const { control, handleSubmit } = useForm();
 
   const [confirmModal, setConfirmModal] = useState(false);
+  const userId = useAppSelector((store) => store.user.id);
+  const { data = { Data: [] } } = useGetUserWalletsQuery({
+    take: 10,
+    "filter.userId": userId,
+  });
+
+  console.log(sendUser);
 
   const onPressSend = async () => {
     setConfirmModal(true);
@@ -36,7 +53,12 @@ const SendPayment: React.FC<Props> = ({ close }) => {
     >
       <View style={styles.container}>
         <View style={{ alignItems: "flex-end" }}>
-          <Entypo onPress={()=>close()} name="cross" color="white" size={25} />
+          <Entypo
+            onPress={() => close()}
+            name="cross"
+            color="white"
+            size={25}
+          />
         </View>
         <TextBigger
           color="white"
@@ -55,15 +77,25 @@ const SendPayment: React.FC<Props> = ({ close }) => {
             key="Wallet"
             name="Wallet"
             render={({ field: { value, onChange } }) => (
-              <WalletDropdown value={value} onChange={onChange} />
+              <WalletDropdown
+                value={value}
+                onChange={onChange}
+                items={data?.Data ?? []}
+              />
             )}
           />
           <Controller
             control={control}
-            key="EmailId"
-            name="EmailId"
+            key="Amount"
+            name="Amount"
             render={({ field: { value, onChange } }) => (
-              <CountryPicker value={value} onChange={onChange} />
+              // <CountryPicker value={value} onChange={onChange} />
+              <Input
+                value={value}
+                onChangeText={(str) => onChange(str)}
+                placeholder="Amount"
+                keyboardType="number-pad"
+              />
             )}
           />
           <Controller
@@ -78,7 +110,7 @@ const SendPayment: React.FC<Props> = ({ close }) => {
               />
             )}
           />
-          <View>
+          <View style = {{marginTop:10}}>
             <TextNormal color="white">Reciepent</TextNormal>
             <View style={styles.modalRecpInner}>
               <View style={styles.modalRecpInner2}>
@@ -87,17 +119,10 @@ const SendPayment: React.FC<Props> = ({ close }) => {
                     width: windowWidth / 10,
                   }}
                   resizeMode="contain"
-                  source={require("../assets/images/pic3.png")}
+                  source={require("../assets/images/blank.png")}
                 />
-                <Text style={styles.modalRecpName}>Wilson Kenter</Text>
+                <Text style={styles.modalRecpName}>{sendUser?.Alias}</Text>
               </View>
-              <Image
-                style={{
-                  width: windowWidth / 6,
-                }}
-                resizeMode="contain"
-                source={require("../assets/images/recpIcon.png")}
-              />
             </View>
           </View>
 
@@ -154,7 +179,8 @@ const styles = StyleSheet.create({
   },
   modalRecpName: {
     color: "#fff",
-    fontSize: windowWidth / 32,
+    fontSize: RFValue(16),
     marginLeft: windowWidth / 40,
+    marginBottom: 8,
   },
 });

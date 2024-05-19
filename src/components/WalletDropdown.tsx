@@ -6,9 +6,16 @@ import { AntDesign } from "@expo/vector-icons";
 const WalletDropdown = (props) => {
   const {
     items = [
-      { key: 1, label: "Wallet 1", value: "wallet-1" },
-      { key: 2, label: "Wallet 2", value: "wallet-2" },
-      { key: 3, label: "Wallet 3", value: "wallet-3" },
+      {
+        Balance: 0,
+        ConvertBalance: 0,
+        ConvertSymbol: "USD",
+        Created: "2024-03-10T15:02:17.9288924",
+        FiatId: 6,
+        FiatSymbol: "CFA",
+        Id: "8029ed2f-548f-4373-87e9-1d9f693cb752",
+        Status: 1,
+      },
     ],
     value,
     onChange,
@@ -17,8 +24,10 @@ const WalletDropdown = (props) => {
     <View style={styles.container}>
       <SelectDropdown
         data={items}
+        defaultValue={items.length ? items[0].Id : null}
         onSelect={(selectedItem, index) => {
           console.log(selectedItem, index);
+          onChange(selectedItem);
         }}
         renderButton={(selectedItem, isOpened) => {
           return (
@@ -29,7 +38,8 @@ const WalletDropdown = (props) => {
                   selectedItem && { color: "white" },
                 ]}
               >
-                {(selectedItem && selectedItem.label) || "Select your wallet"}
+                {(selectedItem && selectedItem?.FiatSymbol) ||
+                  "Select your wallet"}
               </Text>
               <AntDesign
                 name={isOpened ? "up" : "down"}
@@ -48,7 +58,9 @@ const WalletDropdown = (props) => {
                 ...(isSelected && { backgroundColor: "#D2D9DF" }),
               }}
             >
-              <Text style={styles.dropdownItemTxtStyle}>{item.label}</Text>
+              <Text style={styles.dropdownItemTxtStyle}>
+                {item?.FiatSymbol}
+              </Text>
             </View>
           );
         }}

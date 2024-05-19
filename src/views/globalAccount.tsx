@@ -18,6 +18,8 @@ import { Dimensions, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Navbar from "../components/navbar";
 import { useAuth } from "../contexts/authContext";
+import { useGetUserWalletsQuery } from "../redux/apis/auth";
+import { useAppSelector } from "../redux/store";
 import {
   getAllCurrencies,
   getAllTransactions,
@@ -76,8 +78,10 @@ function GlobalAccount({ navigation }: { navigation: any }): JSX.Element {
   const [currenciesSymbols, setCurrenciesSymbols] = useState<any>({});
   const [transactions, setTransactions] = useState<any[]>([]);
 
+  const userId = useAppSelector((store) => store.user.id);
+
   const { user } = useAuth();
-  const { id: userId } = user ?? {};
+  // const { id: userId } = user ?? {};
 
   async function getUserWallets() {
     const wallets = await getAllWallets(userId);
@@ -131,6 +135,10 @@ function GlobalAccount({ navigation }: { navigation: any }): JSX.Element {
     setAreTransactionsLoaded(true);
   }
 
+  useGetUserWalletsQuery({
+    take: 10,
+    "filter.userId": userId,
+  });
   useEffect(() => {
     const focusUnsubscriber = navigation.addListener("focus", () => {
       getUserWallets();
@@ -273,7 +281,7 @@ function GlobalAccount({ navigation }: { navigation: any }): JSX.Element {
               style={styles.buttonWrapInner}
               onPress={() => navigation.navigate("WithdrawFund")}
             >
-               <Image
+              <Image
                 style={{
                   width: windowWidth / 12,
                 }}
@@ -435,7 +443,7 @@ function GlobalAccount({ navigation }: { navigation: any }): JSX.Element {
                   <Text
                     style={{
                       ...styles.state,
-                      color: "#6FCF97"
+                      color: "#6FCF97",
                       // ...(transaction.TypeName === "Topup"
                       //   ? { color: "#6FCF97" }
                       //   : transaction.TypeName === "CreateWithdraw"
@@ -446,7 +454,7 @@ function GlobalAccount({ navigation }: { navigation: any }): JSX.Element {
                     {/* {transaction.TypeName === "Topup"
                       ? "Successful"
                       : "Fund Withdrawn"} */}
-                      Successful
+                    Successful
                   </Text>
                 </View>
               </View>
@@ -618,7 +626,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: windowWidth / 30,
     fontWeight: "bold",
-    textAlign:"right"
+    textAlign: "right",
   },
   state: {
     fontSize: windowWidth / 30,
@@ -647,4 +655,3 @@ const styles = StyleSheet.create({
 });
 
 export default GlobalAccount;
-

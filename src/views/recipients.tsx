@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
@@ -33,10 +33,16 @@ export const Reciepent = ({ item, onPressSend, onPressDelete }: any) => {
         resizeMode="contain"
         source={require("../assets/images/pic1.png")}
       />
-      <View>
-        <Text style={styles.usertext1}>{item.name}</Text>
-        <Text style={styles.usertext2}>{item.email}</Text>
-        <Text style={styles.usertext3}>{item.number}</Text>
+      <View style={{ flex: 1, marginLeft: 10 }}>
+        <Text style={styles.usertext1}>{item?.Alias}</Text>
+        {item?.Email && (
+          <Text style={styles.usertext2} numberOfLines={1}>
+            {item?.Email}
+          </Text>
+        )}
+        {item?.PhoneNumber && (
+          <Text style={styles.usertext3}>{item?.PhoneNumber}</Text>
+        )}
       </View>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <TouchableOpacity onPress={() => onPressDelete(item)}>
@@ -67,17 +73,21 @@ export const Reciepent = ({ item, onPressSend, onPressDelete }: any) => {
   );
 };
 
-function Recipients({ navigation }: { navigation: any }): JSX.Element {
+function Recipients({ navigation, route }: { navigation: any }): JSX.Element {
   const sheetRef = useRef();
   const sendSheetRef = useRef();
+  const recipients = route.params?.recipients;
 
-  const { data, error, isLoading } = useGetReceipentsQuery({});
+  const { data = { Data: [] }, error, isLoading } = useGetReceipentsQuery({});
+  const [selectedToSenduser, setSelectedToSendUser] = useState(null);
 
   const onPressDelete = (item) => {
     console.log({ item });
   };
 
-  const onPressSend = async (item) => {
+  const onPressSend = (item) => {
+    console.log({item})
+    setSelectedToSendUser(item);
     sendSheetRef.current?.open();
   };
 
@@ -109,14 +119,39 @@ function Recipients({ navigation }: { navigation: any }): JSX.Element {
           </TouchableOpacity>
         </View>
         <View style={styles.reciepentContainer}>
-          {TransferData2.map((item, index) => (
-            <Reciepent
-              item={item}
-              key={index}
-              onPressSend={onPressSend}
-              onPressDelete={onPressDelete}
-            />
-          ))}
+          {/* {data?.map((item, index) => (
+            // <Reciepent
+            //   item={item}
+            //   key={index}
+            //   onPressSend={onPressSend}
+            //   onPressDelete={onPressDelete}
+            // />
+            <></>
+          ))} */}
+
+          {recipients && recipients.length ? (
+            recipients.map((item, index) => (
+              <Reciepent
+                item={item}
+                key={index}
+                onPressSend={() => onPressSend(item)}
+                onPressDelete={onPressDelete}
+              />
+            ))
+          ) : data?.Data?.length == 0 ? (
+            <TextNormal color="white" center>
+              No record found.
+            </TextNormal>
+          ) : (
+            data?.Data.map((item, index) => (
+              <Reciepent
+                item={item}
+                key={index}
+                onPressSend={() => onPressSend(item)}
+                onPressDelete={onPressDelete}
+              />
+            ))
+          )}
         </View>
       </ScrollView>
 
@@ -165,7 +200,13 @@ function Recipients({ navigation }: { navigation: any }): JSX.Element {
         keyboardAvoidingViewEnabled={true}
         height={500}
       >
-        <SendPayment close={() => sendSheetRef?.current?.close()} />
+        <SendPayment
+          close={() => {
+            sendSheetRef?.current?.close();
+            setSelectedToSendUser(null);
+          }}
+          sendUser={selectedToSenduser}
+        />
       </RBSheet>
     </LinearGradient>
   );

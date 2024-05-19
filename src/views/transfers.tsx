@@ -1,5 +1,7 @@
 import React, { useRef } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   SafeAreaView,
   StyleSheet,
@@ -12,41 +14,68 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { primaryDark } from "../constants/colors";
-import { globalStyles } from "../styles/globalStyles";
 
+import { Controller, useForm } from "react-hook-form";
 import { Dimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import Navbar from "../components/navbar";
-import { Reciepent } from "./recipients";
-import { TransferData2 } from "../constants/transactionData";
-import { Controller, useForm } from "react-hook-form";
-import Input from "../components/input";
-import PhoneInput from "../components/PhoneInput";
-import { TextNormal } from "../components/AppText";
 import RBSheet from "react-native-raw-bottom-sheet";
+import { TextNormal } from "../components/AppText";
+import PhoneInput from "../components/PhoneInput";
 import SendPayment from "../components/SendPayment";
+import Input from "../components/input";
+import Navbar from "../components/navbar";
+import {
+  useGetlatestSendRecipientsQuery,
+  useLazySearchRecipientsQuery,
+} from "../redux/apis/reciepents";
+import { Reciepent } from "./recipients";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-// const fontScale = PixelRatio.getFontScale();
-// const getFontSize = size => size / fontScale;
-
 function Transfers({ navigation }: { navigation: any }): JSX.Element {
   const { control, handleSubmit } = useForm();
   const sheetRef = useRef();
+
+  const { data = [], refetch } = useGetlatestSendRecipientsQuery({});
+
+  const [searchRecipients, { isLoading, error: searchError }] =
+    useLazySearchRecipientsQuery();
+  console.log({ isLoading });
+
   const onPressSend = () => {
     sheetRef.current?.open();
   };
   const onPressDelete = () => {};
+
+  const onPressSearch = async (data) => {
+    try {
+      const params = {};
+      data["phoneNumber"] &&
+        data["phoneNumber"] == "+" &&
+        delete data.phoneNumber;
+      Object.keys(data).map((key) => {
+        if (data[key] && data[key] != "") params[`filter.${key}`] = data[key];
+      });
+      const response = await searchRecipients(params);
+      if (response.data?.Data && response.data?.Data.length) {
+        navigation.navigate("recipients", { recipients: response.data.Data });
+      } else {
+        Alert.alert("Error", "No user found.");
+      }
+    } catch (error) {
+      console.log("SEATCH ERROR", error);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <LinearGradient colors={[primaryDark, primaryDark]} style={{ flex: 1 }}>
         <Navbar navigation={navigation} />
         <View style={{ flex: 1 }}>
           <ScrollView
-            // contentContainerStyle={{ backgroundColor: "red", height: "100%" }}
-            // style={{ flex: 1, height: "100%" }}
+          // contentContainerStyle={{ backgroundColor: "red", height: "100%" }}
+          // style={{ flex: 1, height: "100%" }}
           >
             <KeyboardAvoidingView style={{ flex: 1 }}>
               <View style={styles.container}>
@@ -62,19 +91,26 @@ function Transfers({ navigation }: { navigation: any }): JSX.Element {
                   <View style={styles.subHeading}>
                     <Text style={styles.subHeadingText}>Recent Transfers</Text>
                   </View>
-                  {TransferData2.slice(0, 3).map((item) => (
-                    <Reciepent
-                      item={item}
-                      onPressSend={onPressSend}
-                      onPressDelete={onPressDelete}
-                    />
-                  ))}
+                  {data.length == 0 ? (
+                    <TextNormal color="white" center>
+                      No record found.
+                    </TextNormal>
+                  ) : (
+                    data.map((item, index) => (
+                      <Reciepent
+                        item={item}
+                        key={index}
+                        onPressSend={onPressSend}
+                        onPressDelete={onPressDelete}
+                      />
+                    ))
+                  )}
                 </View>
-                <View style={{ height:400, justifyContent: "space-evenly" }}>
+                <View style={{ height: 400, justifyContent: "space-evenly" }}>
                   <Controller
                     control={control}
-                    key="EmailId"
-                    name="EmailId"
+                    key="email"
+                    name="email"
                     render={({ field: { value, onChange } }) => (
                       <Input
                         value={value}
@@ -85,8 +121,8 @@ function Transfers({ navigation }: { navigation: any }): JSX.Element {
                   />
                   <Controller
                     control={control}
-                    key="FullName"
-                    name="FullName"
+                    key="name"
+                    name="name"
                     render={({ field: { value, onChange } }) => (
                       <Input
                         value={value}
@@ -97,8 +133,8 @@ function Transfers({ navigation }: { navigation: any }): JSX.Element {
                   />
                   <Controller
                     control={control}
-                    key="PhoneNumber"
-                    name="PhoneNumber"
+                    key="phoneNumber"
+                    name="phoneNumber"
                     render={({ field: { value, onChange } }) => (
                       <PhoneInput
                         placeholder="Phone Number"
@@ -108,12 +144,19 @@ function Transfers({ navigation }: { navigation: any }): JSX.Element {
                     )}
                   />
 
-                  <TouchableOpacity onPress={() => {}}>
+                  <TouchableOpacity
+                    onPress={handleSubmit(onPressSearch)}
+                    disabled={isLoading}
+                  >
                     <LinearGradient
                       colors={["#1E96FC", "#072AC8"]}
                       style={styles.button}
                     >
-                      <TextNormal color="white">Search</TextNormal>
+                      {isLoading ? (
+                        <ActivityIndicator color="white" size="small" />
+                      ) : (
+                        <TextNormal color="white">Search</TextNormal>
+                      )}
                     </LinearGradient>
                   </TouchableOpacity>
                 </View>

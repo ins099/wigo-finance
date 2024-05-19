@@ -19,12 +19,39 @@ export const reciepentsAPIs = createApi({
       query: (params) => ({
         url: `/v1/recipient/paging`,
         method: "GET",
+        params: { take: 5 },
+      }),
+      providesTags: ["Reciepents"],
+    }),
+    getlatestSendRecipients: builder.query({
+      query: (params) => ({
+        url: `/v1/recipient/lastsend?take=5`,
+        method: "GET",
         params,
       }),
       providesTags: ["Reciepents"],
     }),
+    searchRecipients: builder.query({
+      query: (params) => ({
+        url: "/v1/recipient/paging",
+        method: "GET",
+        params: { take: 5, ...params },
+      }),
+    }),
+    findRecipient: builder.query({
+      query: (params) => ({
+        url: "/User/find",
+        method: "GET",
+        params,
+      }),
+    }),
   }),
 });
 
-export const { useAddReceipentMutation, useGetReceipentsQuery } =
-  reciepentsAPIs;
+export const {
+  useAddReceipentMutation,
+  useGetReceipentsQuery,
+  useLazyFindRecipientQuery,
+  useLazySearchRecipientsQuery,
+  useGetlatestSendRecipientsQuery,
+} = reciepentsAPIs;
