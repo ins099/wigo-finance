@@ -69,6 +69,13 @@ export const authAPIs = createApi({
         body,
       }),
     }),
+    sendFund: builder.mutation({
+      query: (body) => ({
+        url: "/fiat/send",
+        method: 'POST',
+        body,
+      })
+    })
   }),
 });
 
@@ -82,4 +89,5 @@ export const {
   useGetWalletQuery,
   useChangePinCodeMutation,
   useGetUserWalletsQuery,
+  useSendFundMutation,
 } = authAPIs;
