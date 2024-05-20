@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BackHandler,
   Dimensions,
@@ -18,6 +18,7 @@ import { TextNormal } from "./AppText";
 import SelectDropdown from "react-native-select-dropdown";
 import { AntDesign } from "@expo/vector-icons";
 import OTPComponent from "./otpComponent";
+import { useSendFundMutation } from "../redux/apis/auth";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -67,8 +68,11 @@ const DropDown = ({
 };
 
 const ConfirmPayment = (props) => {
-  const { visible, setVisible } = props;
+  const { visible, setVisible, payInfo } = props;
   const { top } = useSafeAreaInsets();
+  const [PinCode, setPinCode] = useState('')
+
+  const [sendFund, { isLoading }] = useSendFundMutation()
 
   useEffect(() => {
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
@@ -78,6 +82,14 @@ const ConfirmPayment = (props) => {
       sub.remove();
     };
   }, []);
+
+  const onPressConfirm = async () => {
+    if (!!PinCode) {
+      await sendFund({})
+    } else {
+      Alert.alert("Error", "Please enter your pin code.")
+    }
+  }
 
   return (
     <Modal
@@ -117,13 +129,17 @@ const ConfirmPayment = (props) => {
                 <TextNormal color="white" textStyle={{ fontWeight: "700" }}>
                   From Wallet:
                 </TextNormal>
-                <DropDown />
+                <View style={styles.dropdownButtonStyle}>
+                  {payInfo?.Wallet?.FiatSymbol}
+                </View>
               </View>
               <View style={styles.formItemContainer}>
                 <TextNormal color="white" textStyle={{ fontWeight: "700" }}>
                   Amount:
                 </TextNormal>
-                <DropDown />
+                <View style={styles.dropdownButtonStyle}>
+                  {payInfo?.Amount}
+                </View>
               </View>
               <View style={styles.formItemContainer}>
                 <TextNormal color="white" textStyle={{ fontWeight: "700" }}>
@@ -131,24 +147,26 @@ const ConfirmPayment = (props) => {
                 </TextNormal>
                 <View style={styles.dropdownButtonStyle}>
                   <Text style={styles.dropdownButtonTxtStyle}>
-                    {"item.label"}
+                    {payInfo?.user?.Alias}
                   </Text>
                 </View>
               </View>
             </View>
             <View style={{ flex: 1.5, alignItems: "center" }}>
               <OTPComponent
-                value={""}
-                onChange={function (arg: any): void {}}
+                value={PinCode}
+                onChange={function (arg: any): void { setPinCode(arg) }}
                 containerStyle={{ height: RFPercentage(13) }}
               />
               <View style={styles.btnContainer}>
                 <TouchableOpacity
+                  onPress={setVisible(false)}
                   style={{ ...styles.btn, backgroundColor: "#D8574A" }}
                 >
                   <TextNormal color="white">Cancel</TextNormal>
                 </TouchableOpacity>
                 <TouchableOpacity
+                  onPress={onPressConfirm}
                   style={{ ...styles.btn, backgroundColor: "#1E96FC" }}
                 >
                   <TextNormal color="white">Confirm</TextNormal>

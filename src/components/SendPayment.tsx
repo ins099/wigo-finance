@@ -38,9 +38,12 @@ const SendPayment: React.FC<Props> = ({ close, sendUser }) => {
     "filter.userId": userId,
   });
 
+  const [payInfo, setPayInfo] = useState(null)
+
   console.log(sendUser);
 
-  const onPressSend = async () => {
+  const onPressSend = async (data) => {
+    setPayInfo({ ...data, user: sendUser })
     setConfirmModal(true);
     // close();
   };
@@ -110,7 +113,7 @@ const SendPayment: React.FC<Props> = ({ close, sendUser }) => {
               />
             )}
           />
-          <View style = {{marginTop:10}}>
+          <View style={{ marginTop: 10 }}>
             <TextNormal color="white">Reciepent</TextNormal>
             <View style={styles.modalRecpInner}>
               <View style={styles.modalRecpInner2}>
@@ -126,7 +129,7 @@ const SendPayment: React.FC<Props> = ({ close, sendUser }) => {
             </View>
           </View>
 
-          <TouchableOpacity onPress={onPressSend}>
+          <TouchableOpacity onPress={handleSubmit(onPressSend)}>
             <LinearGradient
               colors={["#1E96FC", "#072AC8"]}
               style={styles.button}
@@ -136,7 +139,7 @@ const SendPayment: React.FC<Props> = ({ close, sendUser }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ConfirmPayment visible={confirmModal} setVisible={setConfirmModal} />
+      <ConfirmPayment visible={confirmModal} setVisible={setConfirmModal} payInfo={payInfo}/>
     </LinearGradient>
   );
 };
