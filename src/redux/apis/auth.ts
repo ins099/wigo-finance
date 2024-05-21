@@ -71,7 +71,7 @@ export const authAPIs = createApi({
     }),
     sendFund: builder.mutation({
       query: (body) => ({
-        url: "/fiat/send",
+        url: "/v1/fiat/send",
         method: 'POST',
         body,
       })

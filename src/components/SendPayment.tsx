@@ -3,32 +3,31 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
-  StyleSheet,
-  View,
-  Image,
   Dimensions,
+  Image,
+  StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { TextBigger, TextNormal } from "./AppText";
-import Input from "./input";
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
-import { PickerComp5 } from "./pickerComp";
-import CountryPicker from "./CountryPicker";
-import WalletDropdown from "./WalletDropdown";
-import ConfirmPayment from "./ConfirmPayment";
 import { useGetUserWalletsQuery } from "../redux/apis/auth";
 import { useAppSelector } from "../redux/store";
+import { TextBigger, TextNormal } from "./AppText";
+import ConfirmPayment from "./ConfirmPayment";
+import WalletDropdown from "./WalletDropdown";
+import Input from "./input";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 interface Props {
   close: () => void;
+  onSendSuccess: () => void;
   sendUser: any;
 }
 
-const SendPayment: React.FC<Props> = ({ close, sendUser }) => {
+const SendPayment: React.FC<Props> = ({ close, sendUser, onSendSuccess }) => {
   const { control, handleSubmit } = useForm();
 
   const [confirmModal, setConfirmModal] = useState(false);
@@ -38,16 +37,13 @@ const SendPayment: React.FC<Props> = ({ close, sendUser }) => {
     "filter.userId": userId,
   });
 
-  const [payInfo, setPayInfo] = useState(null)
-
-  console.log(sendUser);
+  const [payInfo, setPayInfo] = useState(null);
 
   const onPressSend = async (data) => {
-    setPayInfo({ ...data, user: sendUser })
+    setPayInfo({ ...data, user: sendUser });
     setConfirmModal(true);
     // close();
   };
-
   return (
     <LinearGradient
       style={styles.sheetContainer}
@@ -139,7 +135,12 @@ const SendPayment: React.FC<Props> = ({ close, sendUser }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ConfirmPayment visible={confirmModal} setVisible={setConfirmModal} payInfo={payInfo}/>
+      <ConfirmPayment
+        visible={confirmModal}
+        setVisible={setConfirmModal}
+        payInfo={payInfo}
+        onSendSuccess={onSendSuccess}
+      />
     </LinearGradient>
   );
 };

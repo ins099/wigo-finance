@@ -56,18 +56,20 @@ const FormService: React.FC<FormServiceProps> = (props) => {
           defaultValue={defaultvals[it.name]}
         />
       ))}
-      <TouchableOpacity onPress={onHandleSubmit} disabled={walletLoading}>
-        <LinearGradient
-          colors={["#1E96FC", "#072AC8"]}
-          style={styles.cardContainer}
-        >
-          {walletLoading && item.id === "account_detail" ? (
-            <ActivityIndicator color="white" size="small" />
-          ) : (
-            <Text style={styles.text1}>Edit</Text>
-          )}
-        </LinearGradient>
-      </TouchableOpacity>
+      {item.id != "personal_detail" && (
+        <TouchableOpacity onPress={onHandleSubmit} disabled={walletLoading}>
+          <LinearGradient
+            colors={["#1E96FC", "#072AC8"]}
+            style={styles.cardContainer}
+          >
+            {walletLoading && item.id === "account_detail" ? (
+              <ActivityIndicator color="white" size="small" />
+            ) : (
+              <Text style={styles.text1}>Edit</Text>
+            )}
+          </LinearGradient>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

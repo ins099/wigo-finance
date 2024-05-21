@@ -24,6 +24,7 @@ const DatePicker: React.FC<DatePickerProps> = (props) => {
     containerStyle,
     isTime,
     dateInputContainerStyle,
+    ...rest
   } = props;
 
   const [date, setDate] = useState(value ?? new Date());
@@ -34,7 +35,7 @@ const DatePicker: React.FC<DatePickerProps> = (props) => {
     const currentDate = selectedDate;
     setShow(false);
     setDate(currentDate);
-    onChange(currentDate)
+    onChange(currentDate);
   };
 
   const showMode = () => {
@@ -53,8 +54,9 @@ const DatePicker: React.FC<DatePickerProps> = (props) => {
         <TouchableOpacity
           style={[styles.dateContainerStyle, dateInputContainerStyle]}
           onPress={showMode}
+          disabled={!rest?.editable}
         >
-          <TextNormal color={value?"white":"#BBBBBB"}>
+          <TextNormal color={value ? "white" : "#BBBBBB"}>
             {value?.toLocaleDateString() ?? placeholder ?? "Please Select Date"}
           </TextNormal>
           {show && (

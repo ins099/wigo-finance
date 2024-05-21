@@ -1,4 +1,3 @@
-
 export const PROFILE_FIELDS = [
   {
     id: "account_detail",
@@ -47,13 +46,21 @@ export const PROFILE_FIELDS = [
     id: "personal_detail",
     title: "Personal Info",
     fields: [
-      { id: "1", label: "Full Name", type: "text", name: "name", placeholder:'Enter full name' },
+      {
+        id: "1",
+        label: "Full Name",
+        type: "text",
+        name: "name",
+        editable: false,
+        placeholder: "Enter full name",
+      },
       {
         id: "2",
         label: "Date of Birth",
         type: "date",
         name: "dob",
         placeholder: "Select your DOB",
+        editable: false,
       },
       {
         id: "3",
@@ -62,6 +69,7 @@ export const PROFILE_FIELDS = [
         name: "userName",
         placeholder: "Enter your email ID",
         keyboardType: "email-address",
+        editable: false,
       },
       // {
       //   id: "4",
@@ -76,6 +84,7 @@ export const PROFILE_FIELDS = [
         keyboardType: "number-pad",
         maxLength: 15,
         name: "phone",
+        editable: false,
       },
     ],
   },
