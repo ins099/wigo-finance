@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Modal, StyleSheet, Text, View } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -9,7 +9,6 @@ import { globalStyles } from "../styles/globalStyles";
 import { Dimensions, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Navbar from "../components/navbar";
-import { TransferData2 } from "../constants/transactionData";
 // import { useNavigation } from '@react-navigation/native';
 // import pic1 from "../assets/images/pic1.png"
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -18,6 +17,7 @@ import AddReciepent from "../components/AddReciepent";
 import { TextBig, TextNormal } from "../components/AppText";
 import SendPayment from "../components/SendPayment";
 import { useGetReceipentsQuery } from "../redux/apis/reciepents";
+import SuccessPayment from "../components/SuccessPayment";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -74,9 +74,11 @@ export const Reciepent = ({ item, onPressSend, onPressDelete }: any) => {
 };
 
 function Recipients({ navigation, route }: { navigation: any }): JSX.Element {
-  const sheetRef = useRef();
-  const sendSheetRef = useRef();
   const recipients = route.params?.recipients;
+
+  const [sendModal, setSendModal] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
+  const [addModal, setAddModal] = useState(false);
 
   const { data = { Data: [] }, error, isLoading } = useGetReceipentsQuery({});
   const [selectedToSenduser, setSelectedToSendUser] = useState(null);
@@ -86,9 +88,20 @@ function Recipients({ navigation, route }: { navigation: any }): JSX.Element {
   };
 
   const onPressSend = (item) => {
-    console.log({item})
     setSelectedToSendUser(item);
-    sendSheetRef.current?.open();
+    setSendModal(true);
+  };
+
+  const onSendSuccess = () => {
+    setSendModal(false);
+    setSuccessModal(true);
+    // navigation.goBack()
+  };
+
+  const onPressHome = () => {
+    setSuccessModal(false);
+    setSendModal(false);
+    // navigation.reset("Tab");
   };
 
   return (
@@ -107,7 +120,7 @@ function Recipients({ navigation, route }: { navigation: any }): JSX.Element {
           </TextBig>
           <TouchableOpacity
             onPress={() => {
-              sheetRef.current?.open();
+              setAddModal(true);
             }}
           >
             <LinearGradient
@@ -119,17 +132,7 @@ function Recipients({ navigation, route }: { navigation: any }): JSX.Element {
           </TouchableOpacity>
         </View>
         <View style={styles.reciepentContainer}>
-          {/* {data?.map((item, index) => (
-            // <Reciepent
-            //   item={item}
-            //   key={index}
-            //   onPressSend={onPressSend}
-            //   onPressDelete={onPressDelete}
-            // />
-            <></>
-          ))} */}
-
-          {recipients && recipients.length ? (
+          {recipients && recipients?.length ? (
             recipients.map((item, index) => (
               <Reciepent
                 item={item}
@@ -155,59 +158,44 @@ function Recipients({ navigation, route }: { navigation: any }): JSX.Element {
         </View>
       </ScrollView>
 
-      <RBSheet
-        ref={sheetRef}
-        customStyles={{
-          wrapper: {
-            backgroundColor: "rgba(0,0,0,0.3)",
-          },
-          draggableIcon: {
-            backgroundColor: "#000",
-          },
-          container: {
-            borderTopRightRadius: 20,
-            borderTopLeftRadius: 20,
-          },
-        }}
-        customModalProps={{
-          animationType: "slide",
-          statusBarTranslucent: true,
-        }}
-        keyboardAvoidingViewEnabled={true}
-        height={500}
-      >
-        <AddReciepent close={() => sheetRef?.current?.close()} />
-      </RBSheet>
-
-      <RBSheet
-        ref={sendSheetRef}
-        customStyles={{
-          wrapper: {
-            backgroundColor: "rgba(0,0,0,0.3)",
-          },
-          draggableIcon: {
-            backgroundColor: "#000",
-          },
-          container: {
-            borderTopRightRadius: 20,
-            borderTopLeftRadius: 20,
-          },
-        }}
-        customModalProps={{
-          animationType: "slide",
-          statusBarTranslucent: true,
-        }}
-        keyboardAvoidingViewEnabled={true}
-        height={500}
-      >
-        <SendPayment
-          close={() => {
-            sendSheetRef?.current?.close();
-            setSelectedToSendUser(null);
+      <Modal visible={addModal} transparent>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,.5)",
+            justifyContent: "center",
           }}
-          sendUser={selectedToSenduser}
-        />
-      </RBSheet>
+        >
+          <View style={{ height: RFPercentage(80), padding: 10 }}>
+            <AddReciepent close={() => setAddModal(false)} />
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={sendModal} transparent>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,.5)",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ height: RFPercentage(80), padding: 10 }}>
+            <SendPayment
+              close={() => {
+                setSendModal(false);
+                setSelectedToSendUser(null);
+              }}
+              onSendSuccess={onSendSuccess}
+              sendUser={selectedToSenduser}
+            />
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={successModal}>
+        <SuccessPayment onPressHome={onPressHome} />
+      </Modal>
     </LinearGradient>
   );
 }

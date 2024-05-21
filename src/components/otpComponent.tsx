@@ -20,8 +20,8 @@ interface OTPProps {
   cellColor?: string;
   numberOfInputs?: number;
   containerStyle?: ViewStyle;
-  showStyle: boolean;
-  textInputContainerStyle: ViewStyle;
+  showStyle?: boolean;
+  textInputContainerStyle?: ViewStyle;
 }
 
 function OTPComponent(props: OTPProps) {

@@ -1,8 +1,9 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
+  Modal,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -18,7 +19,6 @@ import { primaryDark } from "../constants/colors";
 import { Controller, useForm } from "react-hook-form";
 import { Dimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import RBSheet from "react-native-raw-bottom-sheet";
 import { TextNormal } from "../components/AppText";
 import PhoneInput from "../components/PhoneInput";
 import SendPayment from "../components/SendPayment";
@@ -29,22 +29,25 @@ import {
   useLazySearchRecipientsQuery,
 } from "../redux/apis/reciepents";
 import { Reciepent } from "./recipients";
+import SuccessPayment from "../components/SuccessPayment";
 
 const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
 
 function Transfers({ navigation }: { navigation: any }): JSX.Element {
   const { control, handleSubmit } = useForm();
-  const sheetRef = useRef();
+
+  const [successModal, setSuccessModal] = useState(false);
+  const [sendModal, setSendModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(false);
 
   const { data = [], refetch } = useGetlatestSendRecipientsQuery({});
 
   const [searchRecipients, { isLoading, error: searchError }] =
     useLazySearchRecipientsQuery();
-  console.log({ isLoading });
 
-  const onPressSend = () => {
-    sheetRef.current?.open();
+  const onPressSend = (item) => {
+    setSelectedUser(item);
+    setSendModal(true);
   };
   const onPressDelete = () => {};
 
@@ -66,6 +69,18 @@ function Transfers({ navigation }: { navigation: any }): JSX.Element {
     } catch (error) {
       console.log("SEATCH ERROR", error);
     }
+  };
+
+  const onSendSuccess = () => {
+    setSendModal(false);
+    setSuccessModal(true);
+    // navigation.goBack();
+  };
+
+  const onPressHome = () => {
+    setSuccessModal(false);
+    setSendModal(false);
+    navigation.navigate('GlobalAccount');
   };
 
   return (
@@ -91,7 +106,7 @@ function Transfers({ navigation }: { navigation: any }): JSX.Element {
                   <View style={styles.subHeading}>
                     <Text style={styles.subHeadingText}>Recent Transfers</Text>
                   </View>
-                  {data.length == 0 ? (
+                  {data?.length == 0 ? (
                     <TextNormal color="white" center>
                       No record found.
                     </TextNormal>
@@ -100,8 +115,8 @@ function Transfers({ navigation }: { navigation: any }): JSX.Element {
                       <Reciepent
                         item={item}
                         key={index}
-                        onPressSend={onPressSend}
-                        onPressDelete={onPressDelete}
+                        onPressSend={() => onPressSend(item)}
+                        onPressDelete={() => onPressDelete(item)}
                       />
                     ))
                   )}
@@ -166,29 +181,29 @@ function Transfers({ navigation }: { navigation: any }): JSX.Element {
         </View>
       </LinearGradient>
 
-      <RBSheet
-        ref={sheetRef}
-        customStyles={{
-          wrapper: {
-            backgroundColor: "rgba(0,0,0,0.3)",
-          },
-          draggableIcon: {
-            backgroundColor: "#000",
-          },
-          container: {
-            borderTopRightRadius: 20,
-            borderTopLeftRadius: 20,
-          },
-        }}
-        customModalProps={{
-          animationType: "slide",
-          statusBarTranslucent: true,
-        }}
-        keyboardAvoidingViewEnabled={true}
-        height={500}
-      >
-        <SendPayment close={() => sheetRef?.current?.close()} />
-      </RBSheet>
+      <Modal visible={sendModal} transparent>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,.5)",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ height: RFPercentage(80), padding: 10 }}>
+            <SendPayment
+              close={() => {
+                setSendModal(false);
+                setSelectedUser(null);
+              }}
+              onSendSuccess={onSendSuccess}
+              sendUser={selectedUser}
+            />
+          </View>
+        </View>
+      </Modal>
+      <Modal visible={successModal}>
+        <SuccessPayment  onPressHome={onPressHome} />
+      </Modal>
     </SafeAreaView>
   );
 }

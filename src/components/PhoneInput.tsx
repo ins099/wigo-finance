@@ -55,7 +55,7 @@ const PhoneInput: React.FC<PhoneInputProps> = (props): JSX.Element => {
             initialCountry="us"
             style={[styles.textInput, textInputStyle]}
             textStyle={styles.textInput}
-            textProps={{ maxLength: 15 }}
+            textProps={{ maxLength: 15, ...restProps }}
             autoFormat
             renderFlag={() => null}
           />
@@ -66,6 +66,7 @@ const PhoneInput: React.FC<PhoneInputProps> = (props): JSX.Element => {
             onSelect={(selectedItem, index) => {
               console.log(selectedItem, index);
             }}
+            disabled={!restProps?.editable}
             renderButton={(selectedItem, isOpened) => {
               return (
                 <View style={styles.dropdownButtonStyle}>
@@ -150,8 +151,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 12,
     position: "absolute",
-    right:0,
-    top:15
+    right: 0,
+    top: 15,
   },
   dropdownButtonTxtStyle: {
     flex: 1,
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
   },
 
   dropdownItemStyle: {
-    width: '100%',
+    width: "100%",
     flexDirection: "row",
     paddingHorizontal: 12,
     justifyContent: "center",
@@ -174,8 +175,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: RFPercentage(16),
     // right:-100
-    left:RFPercentage(25)
-
+    left: RFPercentage(25),
   },
 });
 

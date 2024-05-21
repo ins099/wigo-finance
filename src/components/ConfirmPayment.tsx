@@ -1,5 +1,7 @@
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   BackHandler,
   Dimensions,
   Image,
@@ -9,74 +11,29 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 
-import { primaryDark } from "../constants/colors";
-import { TouchableOpacity } from "react-native";
+import { Alert, TouchableOpacity } from "react-native";
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
-import { TextNormal } from "./AppText";
-import SelectDropdown from "react-native-select-dropdown";
-import { AntDesign } from "@expo/vector-icons";
-import OTPComponent from "./otpComponent";
+import { primaryDark } from "../constants/colors";
+import useToast from "../hooks";
 import { useSendFundMutation } from "../redux/apis/auth";
+import { TextNormal } from "./AppText";
+import OTPComponent from "./otpComponent";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const DropDown = ({
-  data = [{ label: "Wallet 1", value: "wallet-1 " }],
-  value,
-}) => {
-  return (
-    <SelectDropdown
-      data={data}
-      defaultValue={value}
-      onSelect={(selectedItem, index) => {
-        console.log(selectedItem, index);
-      }}
-      renderButton={(selectedItem, isOpened) => {
-        return (
-          <View style={styles.dropdownButtonStyle}>
-            <Text style={styles.dropdownButtonTxtStyle}>
-              {(selectedItem && selectedItem.title) || "Select your wallet"}
-            </Text>
-            <AntDesign
-              name={isOpened ? "up" : "down"}
-              color={"white"}
-              size={18}
-              disabled
-            />
-          </View>
-        );
-      }}
-      renderItem={(item, index, isSelected) => {
-        return (
-          <View
-            style={{
-              ...styles.dropdownItemStyle,
-              ...(isSelected && { backgroundColor: "#D2D9DF" }),
-            }}
-          >
-            <Text style={styles.dropdownItemTxtStyle}>{item.label}</Text>
-          </View>
-        );
-      }}
-      showsVerticalScrollIndicator={false}
-      dropdownStyle={styles.dropdownMenuStyle}
-    />
-  );
-};
-
-const ConfirmPayment = (props) => {
-  const { visible, setVisible, payInfo } = props;
+const ConfirmPayment = (props: any) => {
+  const { visible, setVisible, payInfo, onSendSuccess } = props;
   const { top } = useSafeAreaInsets();
-  const [PinCode, setPinCode] = useState('')
+  const [PinCode, setPinCode] = useState("");
+  const { fire } = useToast();
 
-  const [sendFund, { isLoading }] = useSendFundMutation()
+  const [sendFund, { isLoading }] = useSendFundMutation();
 
   useEffect(() => {
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
-      visible && setVisible(false);
+      setVisible(false);
     });
     return () => {
       sub.remove();
@@ -85,11 +42,23 @@ const ConfirmPayment = (props) => {
 
   const onPressConfirm = async () => {
     if (!!PinCode) {
-      await sendFund({})
+      const body = {
+        FromWalletId: payInfo?.Wallet?.Id,
+        ToUser: payInfo?.user?.Id,
+        Amount: payInfo?.Amount,
+        PinCode,
+      };
+      console.log(JSON.stringify(body));
+      const response = await sendFund(body);
+      console.log("====", JSON.stringify(response, null, 1));
+      if (response?.data) {
+        return onSendSuccess();
+      }
+      return fire("An Error occured");
     } else {
-      Alert.alert("Error", "Please enter your pin code.")
+      Alert.alert("Error", "Please enter your pin code.");
     }
-  }
+  };
 
   return (
     <Modal
@@ -130,7 +99,9 @@ const ConfirmPayment = (props) => {
                   From Wallet:
                 </TextNormal>
                 <View style={styles.dropdownButtonStyle}>
-                  {payInfo?.Wallet?.FiatSymbol}
+                  <Text style={styles.dropdownButtonTxtStyle}>
+                    {payInfo?.Wallet?.FiatSymbol}
+                  </Text>
                 </View>
               </View>
               <View style={styles.formItemContainer}>
@@ -138,7 +109,9 @@ const ConfirmPayment = (props) => {
                   Amount:
                 </TextNormal>
                 <View style={styles.dropdownButtonStyle}>
-                  {payInfo?.Amount}
+                  <Text style={styles.dropdownButtonTxtStyle}>
+                    {payInfo?.Amount}
+                  </Text>
                 </View>
               </View>
               <View style={styles.formItemContainer}>
@@ -155,21 +128,30 @@ const ConfirmPayment = (props) => {
             <View style={{ flex: 1.5, alignItems: "center" }}>
               <OTPComponent
                 value={PinCode}
-                onChange={function (arg: any): void { setPinCode(arg) }}
-                containerStyle={{ height: RFPercentage(13) }}
+                onChange={function (arg: any): void {
+                  setPinCode(arg);
+                }}
+                containerStyle={{ height: RFPercentage(16) }}
+                showStyle={true}
               />
               <View style={styles.btnContainer}>
                 <TouchableOpacity
-                  onPress={setVisible(false)}
+                  disabled={isLoading}
+                  onPress={() => setVisible(false)}
                   style={{ ...styles.btn, backgroundColor: "#D8574A" }}
                 >
                   <TextNormal color="white">Cancel</TextNormal>
                 </TouchableOpacity>
                 <TouchableOpacity
+                  disabled={isLoading}
                   onPress={onPressConfirm}
                   style={{ ...styles.btn, backgroundColor: "#1E96FC" }}
                 >
-                  <TextNormal color="white">Confirm</TextNormal>
+                  {isLoading ? (
+                    <ActivityIndicator color="white" size="small" />
+                  ) : (
+                    <TextNormal color="white">Confirm</TextNormal>
+                  )}
                 </TouchableOpacity>
               </View>
             </View>
